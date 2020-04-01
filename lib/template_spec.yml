@@ -1,0 +1,18 @@
+---
+specs:
+  spec_key:
+    description: Spec Description
+
+    variables:
+      param1:
+        - false
+        - true
+
+    converters:
+      - BoolConverter
+
+    rules:
+      'true': 'true[0]'
+
+    pair:
+      'true': 'false'
