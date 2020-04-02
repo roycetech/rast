@@ -55,16 +55,31 @@ class ParameterGenerator
   end
 
   def build_param(validator, scenario, spec)
+    # binding.pry
 
-    param = {
-      spec: spec,
-      scenario: {},
-      expected_outcome: validator.validate(scenario, spec)
-    }
+    param = { spec: spec, scenario: {} }
+    token_converter = {}
+
+    spec.variables.keys.each_with_index do |key, index|
+      spec.variables[key].each do |element|
+        token_converter[element.to_s] = spec.converters[index]
+      end
+    end
 
     spec.variables.keys.zip(scenario) do |array|
-      param[:scenario][array.first.to_sym] = array.last
+      var_name = array.first.to_sym
+      var_value = array.last
+      param[:scenario][var_name] = var_value
     end
+
+    param[:converter_hash] = token_converter
+
+    # binding.pry
+
+    param[:expected_outcome] = validator.validate(
+      scenario: scenario,
+      fixture: param
+    )
 
     param
   end

@@ -11,11 +11,11 @@ fixture - instance of a spec, containing a scenario, reference back to the spec,
 
 vars - raw list of variables to be combined into multiple fixtures.
 
-rule -
+rule - set of outcome paired with rule clause.
 exemption/exclusions - rule defining variable combinations to be excluded from the test.
 
 case -
 
-outcome - the left portion of a rule e.g. true: true&true
+outcome - the left portion of a rule e.g. `true: true&true`
 
 clause - the right portion of a rule

@@ -76,7 +76,7 @@ module LogicHelper
       end
     elsif FALSE == right
       if left_subscript.negative?
-        scenario.contains(left).to_s
+        scenario.include?(left).to_s
       else
         (scenario[left_subscript]).to_s == left
       end

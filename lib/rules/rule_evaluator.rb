@@ -135,6 +135,8 @@ class RuleEvaluator
     end
   end
 
+  private
+
   # /**
   #  * Returns value of 'n' if rule token ends with '[n]'. where 'n' is the
   #  * variable group index.
@@ -142,10 +144,9 @@ class RuleEvaluator
   #  * @param string token to check for subscript.
   #  */
   def extract_subscript(token: '')
-    token[/\[(\d+)\]$/, 1].to_i
+    subscript = token[/\[(\d+)\]$/, 1]
+    subscript.nil? ? -1 : subscript.to_i
   end
-
-  private
 
   # /**
   #  * @param scenario List of values to evaluate against the rule expression.
@@ -188,6 +189,9 @@ class RuleEvaluator
   #  */
   def evaluate_multi(scenario: [], rule_token_convert: {}, operator: nil)
     default_converter = DEFAULT_CONVERT_HASH[scenario.first.class.to_s]
+
+    # binding.pry
+
     left_arr = next_value(
       rule_token_convert: rule_token_convert,
       default_converter: default_converter
@@ -197,6 +201,7 @@ class RuleEvaluator
       rule_token_convert: rule_token_convert,
       default_converter: default_converter
     )
+
 
     answer = send(
       "perform_logical_#{operator.name}",

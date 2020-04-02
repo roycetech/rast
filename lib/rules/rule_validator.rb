@@ -5,8 +5,13 @@ require './lib/rules/rule_processor'
 
 # Validates rules
 class RuleValidator
-  def validate(scenario, spec)
-    rule_result = RuleProcessor.new.evaluate(scenario: scenario, spec: spec)
+  def validate(scenario: [], fixture: {})
+    rule_result = RuleProcessor.new.evaluate(
+      scenario: scenario,
+      fixture: fixture
+    )
+
+    spec = fixture[:spec]
     rule = spec.rule
 
     single_result = rule.size == 1
@@ -15,25 +20,28 @@ class RuleValidator
       outcome = rule.outcomes.first
       binary_outcome(outcome: outcome, spec: spec, expected: next_result)
     else
-      validate_multi(scenario: scenario, spec: spec)
+      validate_multi(scenario: scenario, spec: spec, rule_result: rule_result)
     end
   end
 
   private
 
-  def validate_multi(scenario: [], spec: nil)
-    matched_outputs = {}
+  def validate_multi(scenario: [], spec: nil, rule_result: [])
+    # binding.pry
+
+    matched_outputs = []
     match_count = 0
 
-    rule_result.each_with_index do |result, i|
+    rule_result.map { |result| result == 'true' }.each_with_index do |result, i|
       next unless result
 
       match_count += 1
-      retval = spec.rules.keys[i]
-      matched_outputs << retval
+      matched_outputs << spec.rule.outcomes[i]
     end
     assert("Scenario must fall into a unique rule output/clause:
-     #{scenario} , matched: #{matched_outputs}") { matchCount == 1 }
+     #{scenario} , matched: #{matched_outputs}") { match_count == 1 }
+
+    matched_outputs.first
   end
 
   def binary_outcome(outcome: '', spec: nil, expected: false)

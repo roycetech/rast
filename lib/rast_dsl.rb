@@ -43,10 +43,13 @@ class RastDSL
     generate_rspecs(fixtures: fixtures)
   end
 
+  private
+
   def generate_rspecs(fixtures: [])
     fixtures.each do |fixture|
-      @prepare_block.call(*fixture[:scenario].values)
-      actual = @execute_block.call.to_s
+      params = fixture[:scenario].values
+      @prepare_block&.call(*params)
+      actual = @execute_block.call(*params).to_s
 
       generate_rspec(
         description: fixture[:spec].description,
@@ -58,12 +61,23 @@ class RastDSL
   end
 
   def generate_rspec(description: '', scenario: [], expected: '', actual: '')
+    given = scenario_text(scenario: scenario)
     RSpec.describe "#{@rasted_class}: #{description}" do
-      describe "given: #{scenario}" do
-        it "results to: #{expected}" do
+      describe "given: #{given}" do
+        it "given: #{given} produces: [#{expected}]" do
           expect(actual).to eq(expected)
         end
       end
+    end
+  end
+
+  def scenario_text(scenario: {})
+    # binding.pry
+    scenarios = scenario.to_a
+    if scenarios.size == 1
+      "#{scenarios.first.first} is [#{scenarios.first.last}]"
+    elsif scenarios.size == 2
+      "#{scenarios.first.first}=#{scenarios.first.last} and #{scenarios.last.first}=#{scenarios.last.last}"
     end
   end
 end

@@ -4,7 +4,7 @@ specs:
     description: Prime Number
 
     variables:
-      param:
+      number:
         - -4
         - -1
         - 0
