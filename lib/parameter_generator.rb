@@ -62,7 +62,7 @@ class ParameterGenerator
 
     spec.variables.keys.each_with_index do |key, index|
       spec.variables[key].each do |element|
-        token_converter[element.to_s] = spec.converters[index]
+        token_converter[element.to_s] = spec.converters[index] unless spec.converters.nil?
       end
     end
 

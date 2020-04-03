@@ -1,0 +1,21 @@
+---
+specs:
+  Has Work:
+    variables:
+      Day Type:
+        - Holiday
+        - Regular Day
+      Day of Week:
+        - Sunday
+        - Monday
+        - Tueday
+        - Wednesday
+        - Thursday
+        - Friday
+        - Saturday
+
+    rules:
+      true: Regular day&!(Saturday|Sunday)
+
+    pair:
+      true: false

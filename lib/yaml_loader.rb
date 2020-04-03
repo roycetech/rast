@@ -4,6 +4,7 @@ require 'yaml'
 
 require './lib/rast_spec'
 require './lib/rules/rule'
+require './lib/converters/str_converter'
 
 # Loads Spec Yaml
 class YamlLoader
@@ -36,11 +37,16 @@ class YamlLoader
     pair_config = spec_config['pair']
     spec.init_pair(pair_config: pair_config) unless pair_config.nil?
 
-    return spec unless spec_config['converters'].any?
+    converters = if spec_config['converters'].nil?
+                   str_converter = StrConverter.new
+                   spec_config['variables'].map { |_var| str_converter }
+                 else
+                   spec_config['converters'].map do |converter|
+                     Object.const_get(converter).new
+                   end
+                 end
+    # binding.pry
 
-    converters = spec_config['converters'].map do |converter|
-      Object.const_get(converter).new
-    end
     spec.init_converters(converters: converters)
   end
 end

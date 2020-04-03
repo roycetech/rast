@@ -117,7 +117,7 @@ class RuleEvaluator
     if open_bracket?(token: token)
       @stack_operations << token
     elsif close_bracket?(token: token)
-      while @stack_Operations.present? &&
+      while @stack_operations.any? &&
             !open_bracket?(token: @stack_operations.last.strip)
         @stack_rpn << @stack_operations.pop
       end
@@ -160,10 +160,13 @@ class RuleEvaluator
     stack_rpn_clone = Marshal.load(Marshal.dump(@stack_rpn))
 
     # /* evaluating the RPN expression */
+
+    # binding.pry
+
     while stack_rpn_clone.any?
       token = stack_rpn_clone.pop.strip
       if operator?(token: token)
-        if NOT.to_s == token
+        if NOT.symbol == token
           evaluate_multi_not(scenario: scenario)
         else
           evaluate_multi(
@@ -188,7 +191,7 @@ class RuleEvaluator
   #  * @param operator OR/AND.
   #  */
   def evaluate_multi(scenario: [], rule_token_convert: {}, operator: nil)
-    default_converter = DEFAULT_CONVERT_HASH[scenario.first.class.to_s]
+    default_converter = DEFAULT_CONVERT_HASH[scenario.first.class]
 
     # binding.pry
 
@@ -201,7 +204,6 @@ class RuleEvaluator
       rule_token_convert: rule_token_convert,
       default_converter: default_converter
     )
-
 
     answer = send(
       "perform_logical_#{operator.name}",
@@ -224,10 +226,13 @@ class RuleEvaluator
   #  */
   def evaluate_multi_not(scenario: [])
     left = @stack_answer.pop.strip
-    answer = if LogicHelper.TRUE == left
-               LogicHelper.FALSE
-             elsif LogicHelper.FALSE == left
-               LogicHelper.TRUE
+
+    # binding.pry
+
+    answer = if LogicHelper::TRUE == left
+               LogicHelper::FALSE
+             elsif LogicHelper::FALSE == left
+               LogicHelper::TRUE
              else
                subscript = extract_subscript(token: left)
                if subscript.negative?

@@ -4,7 +4,7 @@ require './lib/parameter_generator'
 
 # Main DSL
 class RastDSL
-  attr_accessor :subject, :rspec_methods, :execute_block, :prepare_block, :transients
+  attr_accessor :subject, :rspec_methods, :execute_block, :prepare_block
 
   def initialize(rasted_class, &block)
     @rasted_class = rasted_class
@@ -66,13 +66,16 @@ class RastDSL
 
   def generate_rspecs(fixtures: [], spec: nil)
     main_scope = self
-    prepare_block = @prepare_block
 
     RSpec.describe "#{@rasted_class}: #{spec.description}" do
       fixtures.each do |fixture|
         params = fixture[:scenario].values
 
-        prepare_block&.call(*params)
+        # binding.pry
+
+
+        instance_eval(prepare_block, *params) if prepare_block
+        # prepare_block&.call(*params)
 
         generate_rspec(
           scope: main_scope,
@@ -90,9 +93,9 @@ def generate_rspec(scope: nil, scenario: {}, expected: '')
     output + "#{key}: #{scenario[key]}"
   end
   it "[#{expected}]=[#{params}]" do
-    # binding.pry
+    binding.pry
 
-    scope.prepare_block&.call(*scenario.values)
+    # scope.prepare_block&.call(*params)
 
     while scope.rspec_methods.any?
       allow_meth = scope.rspec_methods.shift
