@@ -7,6 +7,6 @@ class Worker
   def holiday?; end
 
   def goto_work?
-    !holiday? && day_of_week != :Sunday
+    !holiday? && day_of_week != :Sunday && day_of_week != :Saturday
   end
 end

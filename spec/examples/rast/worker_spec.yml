@@ -8,14 +8,14 @@ specs:
       Day of Week:
         - Sunday
         - Monday
-        - Tueday
+        - Tuesday
         - Wednesday
         - Thursday
         - Friday
         - Saturday
 
     rules:
-      true: Regular day&!(Saturday|Sunday)
+      Rest: Holiday|Sunday
 
     pair:
-      true: false
+      Rest: Work

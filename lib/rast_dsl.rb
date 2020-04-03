@@ -52,7 +52,7 @@ class RastDSL
     @subject = @rasted_class.new
 
     spec_path = caller[0][/spec.*?\.rb/]
-    yaml_path = spec_path.gsub(/\.rb/, '.yml')
+    yaml_path = spec_path.gsub(/(\w+).rb/, 'rast/\\1.yml')
 
     param_generator = ParameterGenerator.new
     fixtures = param_generator.generate_data(yaml_path)
@@ -69,9 +69,10 @@ class RastDSL
     prepare_block = @prepare_block
 
     RSpec.describe "#{@rasted_class}: #{spec.description}" do
+      # binding.pry
+
       fixtures.each do |fixture|
         params = fixture[:scenario].values
-
         prepare_block&.call(*params)
 
         generate_rspec(
@@ -89,21 +90,41 @@ def generate_rspec(scope: nil, scenario: {}, expected: '')
     output += ', ' unless output == ''
     output + "#{key}: #{scenario[key]}"
   end
+
+  def subject
+    scope.subject
+  end
+
   it "[#{expected}]=[#{params}]" do
+    # binding.pry
+
     block_params = scenario.values
-    scope.prepare_block&.call(*block_params) unless scope.rspec_methods.any?
+    # scope.prepare_block&.call(*block_params) unless scope.rspec_methods.any?
+
+    # if scope.prepare_block
+    #   instance_exec(*block_params, &scope.prepare_block)
+    # end
 
     while scope.rspec_methods.any?
-      allow_meth = scope.rspec_methods.shift
-      allow_mock = send(allow_meth[:name], allow_meth[:args])
-      receive_meth = scope.rspec_methods.shift
-
-      receive_result = send(receive_meth[:name], receive_meth[:args])
-
-      receive_result.instance_eval { receive_meth[:block].call }
-      to_meth = scope.rspec_methods.shift
-      allow_mock.send(to_meth[:name], receive_result)
+      first_meth = scope.rspec_methods.shift
+      second_meth = scope.rspec_methods.shift
+      if first_meth[:name] == :allow && second_meth[:name] == :receive
+        allow(scope.subject).to receive(second_meth[:args], &second_meth[:block])
+      end
+      scope.rspec_methods.shift
     end
+
+    # while scope.rspec_methods.any?
+    #   allow_meth = scope.rspec_methods.shift
+    #   allow_mock = send(allow_meth[:name], allow_meth[:args])
+    #   receive_meth = scope.rspec_methods.shift
+
+    #   receive_result = send(receive_meth[:name], receive_meth[:args])
+
+    #   receive_result.instance_eval { receive_meth[:block].call }
+    #   to_meth = scope.rspec_methods.shift
+    #   allow_mock.send(to_meth[:name], receive_result)
+    # end
 
     actual = scope.execute_block.call(*block_params).to_s
 
