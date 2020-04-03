@@ -90,9 +90,8 @@ def generate_rspec(scope: nil, scenario: {}, expected: '')
     output + "#{key}: #{scenario[key]}"
   end
   it "[#{expected}]=[#{params}]" do
-    # binding.pry
-
-    scope.prepare_block&.call(*scenario.values)
+    block_params = scenario.values
+    scope.prepare_block&.call(*block_params) unless scope.rspec_methods.any?
 
     while scope.rspec_methods.any?
       allow_meth = scope.rspec_methods.shift
@@ -106,7 +105,7 @@ def generate_rspec(scope: nil, scenario: {}, expected: '')
       allow_mock.send(to_meth[:name], receive_result)
     end
 
-    actual = scope.execute_block.call(*params).to_s
+    actual = scope.execute_block.call(*block_params).to_s
 
     expect(actual).to eq(expected)
   end
