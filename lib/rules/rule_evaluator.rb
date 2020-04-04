@@ -91,7 +91,7 @@ class RuleEvaluator
   def next_value(rule_token_convert: {}, default_converter: nil)
     subscript = -1
     retval = []
-    value = @stack_answer.pop.strip
+    value = @stack_answer.pop&.strip
     if TRUE != value && FALSE != value
       subscript = extract_subscript(token: value.to_s)
       value_str = value.to_s.strip

@@ -5,6 +5,7 @@ require 'yaml'
 require './lib/rast_spec'
 require './lib/rules/rule'
 require './lib/converters/str_converter'
+require './lib/converters/float_converter'
 
 # Loads Spec Yaml
 class YamlLoader
