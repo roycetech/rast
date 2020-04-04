@@ -1,8 +1,6 @@
 ---
 specs:
-  logical_and:
-    description: Logical AND
-
+  Logical AND:
     variables:
       param1:
         - false

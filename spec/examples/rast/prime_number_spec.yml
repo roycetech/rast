@@ -1,8 +1,6 @@
 ---
 specs:
-  prime_number:
-    description: Prime Number
-
+  Prime Number:
     variables:
       number:
         - -4

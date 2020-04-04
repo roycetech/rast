@@ -21,6 +21,7 @@ class YamlLoader
 
     yaml.keys.each do |key|
       spec_config = yaml[key]
+      spec_config[:description] = key
       @specs << instantiate_spec(spec_config)
     end
   end
@@ -29,7 +30,7 @@ class YamlLoader
 
   def instantiate_spec(spec_config)
     spec = RastSpec.new(
-      description: spec_config['description'],
+      description: spec_config[:description],
       variables: spec_config['variables'],
       rule: Rule.new(rules: spec_config['rules'])
     )
