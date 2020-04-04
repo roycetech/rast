@@ -4,7 +4,8 @@ require './lib/parameter_generator'
 
 # Main DSL
 class RastDSL
-  attr_accessor :subject, :rspec_methods, :execute_block, :prepare_block, :transients
+  attr_accessor :subject, :rspec_methods, :execute_block, :prepare_block,
+                :transients
 
   def initialize(rasted_class, &block)
     @rasted_class = rasted_class
@@ -38,6 +39,8 @@ class RastDSL
   def method_missing(method_name_symbol, *args, &block)
     return super if method_name_symbol == :to_ary
 
+    # puts "Storing invocation for later (#{method_name_symbol})..."
+
     @rspec_methods << {
       name: method_name_symbol,
       args: args.first,
@@ -66,14 +69,13 @@ class RastDSL
 
   def generate_rspecs(fixtures: [], spec: nil)
     main_scope = self
-    prepare_block = @prepare_block
+    # prepare_block = @prepare_block
 
     RSpec.describe "#{@rasted_class}: #{spec.description}" do
-      # binding.pry
-
       fixtures.each do |fixture|
-        params = fixture[:scenario].values
-        prepare_block&.call(*params)
+
+        # params = fixture[:scenario].values
+        # prepare_block&.call(*params)
 
         generate_rspec(
           scope: main_scope,
@@ -86,24 +88,22 @@ class RastDSL
 end
 
 def generate_rspec(scope: nil, scenario: {}, expected: '')
-  params = scenario.keys.inject('') do |output, key|
+  spec_params = scenario.keys.inject('') do |output, key|
     output += ', ' unless output == ''
     output + "#{key}: #{scenario[key]}"
   end
 
-  def subject
-    scope.subject
-  end
-
-  it "[#{expected}]=[#{params}]" do
+  it "[#{expected}]=[#{spec_params}]" do
     # binding.pry
 
     block_params = scenario.values
-    # scope.prepare_block&.call(*block_params) unless scope.rspec_methods.any?
+    scope.prepare_block&.call(*block_params) unless scope.rspec_methods.any?
 
     # if scope.prepare_block
     #   instance_exec(*block_params, &scope.prepare_block)
     # end
+
+    # puts "invocations: #{scope.rspec_methods.size / 3}"
 
     while scope.rspec_methods.any?
       first_meth = scope.rspec_methods.shift

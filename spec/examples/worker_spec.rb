@@ -10,7 +10,6 @@ rast Worker do
   end
 
   execute do
-
-    result subject.goto_work? ? 'Work' : 'Rest'
+    result subject.goto_work? ? :Work : :Rest
   end
 end
