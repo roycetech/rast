@@ -2,10 +2,10 @@
 specs:
   Logical AND:
     variables:
-      param1:
+      left:
         - false
         - true
-      param2:
+      right:
         - false
         - true
 
@@ -21,10 +21,10 @@ specs:
 
   Logical OR:
     variables:
-      param1:
+      left:
         - false
         - true
-      param2:
+      right:
         - false
         - true
 
