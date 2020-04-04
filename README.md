@@ -19,3 +19,9 @@ case -
 outcome - the left portion of a rule e.g. `true: true&true`
 
 clause - the right portion of a rule
+
+
+##
+
+When running the tests, the execution starts at the spec file, then invoking the
+DSL. The DSL will then invoke the parameter generator to generate the scenarios.

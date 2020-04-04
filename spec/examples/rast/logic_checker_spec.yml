@@ -18,3 +18,22 @@ specs:
 
     pair:
       true: false
+
+  Logical OR:
+    variables:
+      param1:
+        - false
+        - true
+      param2:
+        - false
+        - true
+
+    converters:
+      - BoolConverter
+      - BoolConverter
+
+    rules:
+      true: 'true[0]|true[1]'
+
+    pair:
+      true: false

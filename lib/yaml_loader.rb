@@ -8,22 +8,22 @@ require './lib/converters/str_converter'
 
 # Loads Spec Yaml
 class YamlLoader
-  attr_accessor :specs
+  attr_accessor :spec
 
-  def initialize(uri)
+  # @id - spec ID to load
+  def initialize(uri: '', id: '')
     @uri = uri
-
-    @specs = []
+    @id = id
   end
 
   def load
     yaml = YAML.load_file(@uri)['specs']
 
-    yaml.keys.each do |key|
-      spec_config = yaml[key]
-      spec_config[:description] = key
-      @specs << instantiate_spec(spec_config)
-    end
+    @id = yaml.keys.first if @id.empty?
+
+    spec_config = yaml[@id]
+    spec_config[:description] = @id
+    @spec = instantiate_spec(spec_config)
   end
 
   private

@@ -7,29 +7,23 @@ require './lib/rules/rule_validator'
 
 # Generates the test parameters.
 class ParameterGenerator
-  def generate_data(yaml_path)
-    loader = YamlLoader.new(yaml_path)
+  def generate_data(yaml_path: '', id: nil)
+    loader = YamlLoader.new(uri: yaml_path, id: id)
     loader.load
-
-    specs = loader.specs
-
-    retval = []
-    specs.each { |spec| generate_fixtures(list: retval, spec: spec) }
-
-    retval
+    generate_fixtures(spec: loader.spec)
   end
 
   # addCase. Generate the combinations, then add the fixture to the final list
-  def generate_fixtures(list: nil, spec: nil)
+  def generate_fixtures(spec: nil)
+    list = []
     variables = spec.variables
     var_first = spec.variables.first
     multipliers = []
 
     (1...variables.size).each { |i| multipliers << variables.values[i].dup }
-
     scenarios = var_first.last.product(*multipliers)
-
     add_fixtures(scenarios: scenarios, spec: spec, list: list)
+    list
   end
 
   private
