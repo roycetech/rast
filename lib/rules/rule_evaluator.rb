@@ -236,7 +236,7 @@ class RuleEvaluator
              else
                subscript = extract_subscript(token: left)
                if subscript.negative?
-                 (!scenario.inlude?(left)).to_s
+                 (!scenario.include?(left)).to_s
                else
                  default_converter = DEFAULT_CONVERT_HASH[scenario.first.class]
                  converted = default_converter.convert(left[RE_TOKEN_BODY])

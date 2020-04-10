@@ -1,21 +1,32 @@
 # frozen_string_literal: true
 
 require 'pry'
-require './lib/yaml_loader'
+require 'yaml'
+require './lib/rast_spec'
+require './lib/rules/rule'
 require './lib/rules/rule_evaluator'
 require './lib/rules/rule_validator'
 
+require './lib/converters/float_converter'
+
 # Generates the test parameters.
 class ParameterGenerator
-  def generate_data(yaml_path: '', id: nil)
-    loader = YamlLoader.new(uri: yaml_path, id: id)
-    loader.load
-    generate_fixtures(spec: loader.spec)
+  def initialize(yaml_path: '')
+    p "Loading: #{yaml_path}"
+    @specs_config = YAML.load_file(yaml_path)['specs']
+
+    # p @specs_config
   end
 
   # addCase. Generate the combinations, then add the fixture to the final list
-  def generate_fixtures(spec: nil)
+  def generate_data(spec_id: '')
+    spec_config = @specs_config[spec_id]
+
+    spec_config[:description] = spec_id
+    spec = instantiate_spec(spec_config)
+
     list = []
+
     variables = spec.variables
     var_first = spec.variables.first
     multipliers = []
@@ -49,8 +60,6 @@ class ParameterGenerator
   end
 
   def build_param(validator, scenario, spec)
-    # binding.pry
-
     param = { spec: spec, scenario: {} }
     token_converter = {}
 
@@ -67,14 +76,33 @@ class ParameterGenerator
     end
 
     param[:converter_hash] = token_converter
-
-    # binding.pry
-
     param[:expected_outcome] = validator.validate(
       scenario: scenario,
       fixture: param
     )
 
     param
+  end
+
+  def instantiate_spec(spec_config)
+    spec = RastSpec.new(
+      description: spec_config[:description],
+      variables: spec_config['variables'],
+      rule: Rule.new(rules: spec_config['rules'])
+    )
+
+    pair_config = spec_config['pair']
+    spec.init_pair(pair_config: pair_config) unless pair_config.nil?
+
+    converters = if spec_config['converters'].nil?
+                   str_converter = StrConverter.new
+                   spec_config['variables'].map { |_var| str_converter }
+                 else
+                   spec_config['converters'].map do |converter|
+                     Object.const_get(converter).new
+                   end
+                 end
+
+    spec.init_converters(converters: converters)
   end
 end

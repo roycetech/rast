@@ -1,6 +1,6 @@
 ---
 specs:
-  Has Work:
+  '#goto_work?':
     variables:
       Day Type:
         - Holiday

@@ -4,9 +4,11 @@ require './lib/rast_dsl'
 require './examples/prime_number'
 
 rast PrimeNumber do
-  execute do |number|
-    result(subject.prime?(number))
-  rescue
-    result(:ERROR)
+  spec '#prime?' do
+    execute do |number|
+      result subject.prime?(number)
+    rescue StandardError
+      result(:ERROR)
+    end
   end
 end

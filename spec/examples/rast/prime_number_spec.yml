@@ -1,6 +1,6 @@
 ---
 specs:
-  Prime Number:
+  '#prime?':
     variables:
       number:
         - -4

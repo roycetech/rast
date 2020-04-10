@@ -4,7 +4,7 @@
 class Operator
   # Not('!', Byte.MAX_VALUE), And('&', (byte) 2), Or('|', (byte) 1)
 
-  attr_accessor :name, :symbol, :precedence
+  attr_reader :name, :symbol, :precedence
 
   def initialize(name: '', symbol: '', precedence: -1)
     @name = name

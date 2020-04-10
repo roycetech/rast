@@ -2,21 +2,27 @@
 
 require './lib/parameter_generator'
 
-# Main DSL
+# Main DSL. This is the entry point of the test when running a spec.
 class RastDSL
-  attr_accessor :subject, :rspec_methods, :execute_block, :prepare_block
+  attr_accessor :subject, :rspec_methods, :execute_block, :prepare_block,
+                :transients, :outcomes
 
   def initialize(rasted_class, &block)
+    # binding.pry
+
     @rasted_class = rasted_class
     @transients = []
     @result = nil
     @rspec_methods = []
-    instance_eval(&block)
-  end
+    @subject = rasted_class.new
+    @outcomes = []
 
-  def prepare(&block)
-    @prepare_block = block
-    @transients
+    spec_path = caller[2][/spec.*?\.rb/]
+    yaml_path = spec_path.gsub(/(\w+).rb/, 'rast/\\1.yml')
+
+    @generator = ParameterGenerator.new(yaml_path: yaml_path)
+
+    instance_eval(&block)
   end
 
   def set(key, value)
@@ -28,7 +34,7 @@ class RastDSL
   end
 
   def result(outcome)
-    @outcome = outcome
+    @outcomes << outcome.to_s
   end
 
   def respond_to_missing?
@@ -47,15 +53,26 @@ class RastDSL
     self
   end
 
+  def spec(id, &block)
+    # p "#{id} specing...."
+    @id = id
+
+    instance_eval(&block)
+  end
+
+  def prepare(&block)
+    # p 'Preparing'
+
+    @prepare_block = block
+    @transients
+  end
+
   def execute(&block)
+    # p 'Executing'
     @execute_block = block
-    @subject = @rasted_class.new
 
-    spec_path = caller[0][/spec.*?\.rb/]
-    yaml_path = spec_path.gsub(/\.rb/, '.yml')
+    fixtures = @generator.generate_data(spec_id: @id)
 
-    param_generator = ParameterGenerator.new
-    fixtures = param_generator.generate_data(yaml_path)
     fixtures.sort_by! { |fixture| fixture[:expected_outcome] }
 
     spec = fixtures.first[:spec]
@@ -69,14 +86,6 @@ class RastDSL
 
     RSpec.describe "#{@rasted_class}: #{spec.description}" do
       fixtures.each do |fixture|
-        params = fixture[:scenario].values
-
-        # binding.pry
-
-
-        instance_eval(prepare_block, *params) if prepare_block
-        # prepare_block&.call(*params)
-
         generate_rspec(
           scope: main_scope,
           scenario: fixture[:scenario],
@@ -88,34 +97,37 @@ class RastDSL
 end
 
 def generate_rspec(scope: nil, scenario: {}, expected: '')
-  params = scenario.keys.inject('') do |output, key|
+  spec_params = scenario.keys.inject('') do |output, key|
     output += ', ' unless output == ''
     output + "#{key}: #{scenario[key]}"
   end
-  it "[#{expected}]=[#{params}]" do
-    binding.pry
 
-    # scope.prepare_block&.call(*params)
+  it "[#{expected}]=[#{spec_params}]" do
+    block_params = scenario.values
+    scope.prepare_block&.call(*block_params) unless scope.rspec_methods.any?
 
     while scope.rspec_methods.any?
-      allow_meth = scope.rspec_methods.shift
-      allow_mock = send(allow_meth[:name], allow_meth[:args])
-      receive_meth = scope.rspec_methods.shift
-
-      receive_result = send(receive_meth[:name], receive_meth[:args])
-
-      receive_result.instance_eval { receive_meth[:block].call }
-      to_meth = scope.rspec_methods.shift
-      allow_mock.send(to_meth[:name], receive_result)
+      first_meth = scope.rspec_methods.shift
+      second_meth = scope.rspec_methods.shift
+      if first_meth[:name] == :allow && second_meth[:name] == :receive
+        allow(scope.subject)
+          .to receive(second_meth[:args], &second_meth[:block])
+      end
+      scope.rspec_methods.shift
     end
 
-    actual = scope.execute_block.call(*params).to_s
+    yo = scope.execute_block.call(*block_params).to_s
 
-    expect(actual).to eq(expected)
+    # p '-----------------------'
+    # p yo
+    # p scope.outcomes
+
+    expect(scope.outcomes.shift).to eq(expected)
   end
 end
 
 # DSL Entry Point
 def rast(rasted_class, &block)
+  # p "Entering DSL: #{rasted_class}"
   RastDSL.new(rasted_class, &block)
 end

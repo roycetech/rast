@@ -4,12 +4,14 @@ require './lib/rast_dsl'
 require './examples/recruiter'
 
 rast Recruiter do
-  prepare do |position, score|
-    allow(subject).to receive(:score) { score }
-    allow(subject).to receive(:position) { position }
-  end
+  spec '#assess' do
+    prepare do |position, score|
+      allow(subject).to receive(:score) { score }
+      allow(subject).to receive(:position) { position }
+    end
 
-  execute do
-    result subject.assess
+    execute do
+      result subject.assess
+    end
   end
 end

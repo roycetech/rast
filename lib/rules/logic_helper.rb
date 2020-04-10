@@ -1,6 +1,3 @@
-# frozen_string_literal: true
-
-require 'pry'
 
 # Provides logic evaluation functionalities.
 module LogicHelper
