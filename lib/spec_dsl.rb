@@ -64,7 +64,7 @@ class SpecDSL
     spec = @fixtures.first[:spec]
     main_scope = self
 
-    RSpec.describe "#{@rasted_class}: #{spec.description}" do
+    RSpec.describe "#{@subject.class}: #{spec.description}" do
       main_scope.fixtures.each do |fixture|
         generate_rspec(
           scope: main_scope,
