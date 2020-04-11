@@ -18,20 +18,8 @@ class SpecDSL
     instance_eval(&block)
   end
 
-  def set(key, value)
-    @transients[key] = value
-  end
-
-  def get(key)
-    @transients[key]
-  end
-
   def result(outcome)
     @outcome = outcome.to_s
-  end
-
-  def respond_to_missing?
-    super
   end
 
   def method_missing(method_name_symbol, *args, &block)

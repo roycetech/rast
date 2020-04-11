@@ -42,7 +42,7 @@ class ParameterGenerator
     return true if spec.exempt_rule.nil?
 
     exempt_rule = fixture.exempt_rule
-    rule_evaluator = RuleEvaluator.new(spec.converters)
+    rule_evaluator = RuleEvaluator.new(converters: spec.converters)
     rule_evaluator.parse(exempt_rule)
     !ruleEvaluator.evaluate(scenario, spec.converters)
   end
