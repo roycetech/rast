@@ -20,12 +20,14 @@ class Rule
     @outcome_clause_hash = {}
     # should have array of the rule pairs
     # rules = pActRuleSrc.split("~");
-    dups = []
+    duplicates = []
 
     rules.each do |outcome, clause|
-      raise "#{outcome} matched multiple clauses" if dups.include?(outcome)
+      if duplicates.include?(outcome)
+        raise "#{outcome} matched multiple clauses"
+      end
 
-      dups << outcome
+      duplicates << outcome
       clause = remove_spaces(string: clause, separator: '\(')
       clause = remove_spaces(string: clause, separator: '\)')
       clause = remove_spaces(string: clause, separator: '&')
@@ -72,12 +74,12 @@ class Rule
   #  * @return the actionToRuleClauses
   #  */
   def rule_outcome(scenario: [])
-    scen_str = scenario.to_s
-    anded_scen = scen_str[1..-2].gsub(/,\s/, '&')
+    scenario_string = scenario.to_s
+    anded_scenario = scenario_string[1..-2].gsub(/,\s/, '&')
 
-    @outcome_rule_hash.each do |key, clause|
+    @outcome_clause_hash.each do |key, clause|
       or_list_clause = clause.split('\|').map(&:strip)
-      return key if or_list_clause.include?(anded_scen)
+      return key if or_list_clause.include?(anded_scenario)
     end
   end
 
@@ -86,6 +88,6 @@ class Rule
   #  * @return String representation of this instance.
   #  */
   def to_s
-    @outcomeClauseHash.to_s
+    @outcome_clause_hash.to_s
   end
 end

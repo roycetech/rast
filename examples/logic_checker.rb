@@ -10,7 +10,6 @@ class LogicChecker
   # @param argument1 first argument of Boolean type.
   # @param argument2 second argument of Boolean type.
   def and(argument1, argument2)
-    p 'anding...'
     argument1 && argument2
   end
 
@@ -19,7 +18,6 @@ class LogicChecker
   # @param argument1 first argument of Boolean type.
   # @param argument2 second argument of Boolean type.
   def or(argument1, argument2)
-    p 'oring....'
     argument1 || argument2
   end
 end

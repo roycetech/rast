@@ -12,14 +12,13 @@ require './lib/converters/float_converter'
 # Generates the test parameters.
 class ParameterGenerator
   def initialize(yaml_path: '')
-    p "Loading: #{yaml_path}"
     @specs_config = YAML.load_file(yaml_path)['specs']
 
     # p @specs_config
   end
 
   # addCase. Generate the combinations, then add the fixture to the final list
-  def generate_data(spec_id: '')
+  def generate_fixtures(spec_id: '')
     spec_config = @specs_config[spec_id]
 
     spec_config[:description] = spec_id
