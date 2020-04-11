@@ -9,4 +9,6 @@ group :test do
   gem 'pry'
   gem 'pry-nav'
   gem 'rspec'
+  gem 'simplecov'
+  gem 'simplecov-html'
 end
