@@ -6,6 +6,17 @@ require './lib/rast/spec_dsl'
 
 # Main DSL. This is the entry point of the test when running a spec.
 class Rast
+# RSpec All scenario test
+#
+# Example:
+#   >> Hola.hi("spanish")
+#   => hola mundo
+#
+# Arguments:
+#   language: (String)
+
+
+
   alias global_spec spec
 
   def initialize(rasted_class, &block)

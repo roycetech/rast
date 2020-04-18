@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Royce Remulla']
   spec.email         = ['royce.com@gmail.com']
 
-  spec.summary       = 'RSpec AST - All scenario Testing'
-  spec.description   = 'Extends rspec functionality by using the catch-all-scenario (CAST) principle.'
+  spec.summary       = 'RSpec AST - All Scenario Testing'
+  spec.description   = 'Extends RSpec functionality by using the catch-all-scenario testing (CAST) principle.'
   spec.homepage      = 'https://github.com/roycetech/rast'
   spec.license       = 'MIT'
   spec.required_ruby_version = Gem::Requirement.new('>= 2.3.0')
@@ -26,5 +26,5 @@ Gem::Specification.new do |spec|
   end
   spec.bindir        = 'exe'
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
-  spec.require_paths = ['lib']
+  spec.require_paths = %w[lib lib/rast]
 end
