@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require './lib/rast_dsl'
+require './lib/rast'
 require './examples/logic_checker'
 
 rast LogicChecker do

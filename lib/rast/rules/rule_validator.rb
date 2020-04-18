@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require './lib/assert'
-require './lib/rules/rule_processor'
+require './lib/rast/assert'
+require './lib/rast/rules/rule_processor'
 
 # Validates rules
 class RuleValidator

@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
-require './lib/parameter_generator'
-require './lib/spec_dsl'
+require 'rspec'
+require './lib/rast/parameter_generator'
+require './lib/rast/spec_dsl'
 
 # Main DSL. This is the entry point of the test when running a spec.
-class RastDSL
+class Rast
   alias global_spec spec
 
   def initialize(rasted_class, &block)
@@ -30,5 +31,5 @@ end
 
 # DSL Entry Point
 def rast(rasted_class, &block)
-  RastDSL.new(rasted_class, &block)
+  Rast.new(rasted_class, &block)
 end

@@ -2,12 +2,12 @@
 
 require 'pry'
 require 'yaml'
-require './lib/rast_spec'
-require './lib/rules/rule'
-require './lib/rules/rule_evaluator'
-require './lib/rules/rule_validator'
+require './lib/rast/rast_spec'
+require './lib/rast/rules/rule'
+require './lib/rast/rules/rule_evaluator'
+require './lib/rast/rules/rule_validator'
 
-require './lib/converters/float_converter'
+require './lib/rast/converters/float_converter'
 
 # Generates the test parameters.
 class ParameterGenerator
@@ -64,7 +64,9 @@ class ParameterGenerator
 
     spec.variables.keys.each_with_index do |key, index|
       spec.variables[key].each do |element|
-        token_converter[element.to_s] = spec.converters[index] unless spec.converters.nil?
+        unless spec.converters.nil?
+          token_converter[element.to_s] = spec.converters[index]
+        end
       end
     end
 

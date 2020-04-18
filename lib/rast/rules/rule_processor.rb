@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require './lib/rules/rule_evaluator'
+require './lib/rast/rules/rule_evaluator'
 
 # undoc
 class RuleProcessor
