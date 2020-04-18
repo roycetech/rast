@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'rspec'
-require './lib/rast/parameter_generator'
+require_relative 'rast/parameter_generator'
 require './lib/rast/spec_dsl'
 
 # Main DSL. This is the entry point of the test when running a spec.
