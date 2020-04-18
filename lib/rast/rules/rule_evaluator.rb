@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require './lib/rast/rules/operator'
-require './lib/rast/rules/logic_helper'
-require './lib/rast/converters/int_converter'
-require './lib/rast/converters/bool_converter'
-require './lib/rast/converters/str_converter'
+require_relative 'operator'
+require_relative 'logic_helper'
+require 'rast/converters/int_converter'
+require 'rast/converters/bool_converter'
+require 'rast/converters/str_converter'
 
 # Evaluates the rules.
 class RuleEvaluator

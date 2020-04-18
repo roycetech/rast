@@ -2,7 +2,7 @@
 
 require 'rspec'
 require_relative 'rast/parameter_generator'
-require './lib/rast/spec_dsl'
+require_relative 'rast/spec_dsl'
 
 # Main DSL. This is the entry point of the test when running a spec.
 class Rast
