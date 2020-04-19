@@ -22,6 +22,10 @@ class SpecDSL
     @outcome = outcome.to_s
   end
 
+  def respond_to_missing?(*several_variants)
+    super(several_variants)
+  end
+
   def method_missing(method_name_symbol, *args, &block)
     return super if method_name_symbol == :to_ary
 
@@ -42,7 +46,7 @@ class SpecDSL
   def execute(&block)
     @execute_block = block
 
-    @fixtures.sort_by! { |fixture| fixture[:expected_outcome] }
+    @fixtures.sort_by! { |fixture| fixture[:expected_outcome] + fixture[:scenario].to_s }
     generate_rspecs
   end
 

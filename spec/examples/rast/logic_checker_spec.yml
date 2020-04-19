@@ -9,6 +9,8 @@ specs:
         - false
         - true
 
+    exclude: 'false[0]&true[1]'
+
     converters:
       - BoolConverter
       - BoolConverter

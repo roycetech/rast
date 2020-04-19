@@ -39,12 +39,12 @@ class ParameterGenerator
   private
 
   def valid_case?(scenario, spec)
-    return true if spec.exempt_rule.nil?
+    return true if spec.exclude_clause.nil?
 
-    exempt_rule = fixture.exempt_rule
+    exclude_clause = spec.exclude_clause
     rule_evaluator = RuleEvaluator.new(converters: spec.converters)
-    rule_evaluator.parse(exempt_rule)
-    !ruleEvaluator.evaluate(scenario, spec.converters)
+    rule_evaluator.parse(expression: exclude_clause)
+    rule_evaluator.evaluate(scenario: scenario, rule_token_convert: spec.converters) == "false"
   end
 
   # add all fixtures to the list.
@@ -94,6 +94,8 @@ class ParameterGenerator
 
     pair_config = spec_config['pair']
     spec.init_pair(pair_config: pair_config) unless pair_config.nil?
+
+    spec.init_exclusion(spec_config['exclude']) unless spec_config['exclude'].nil?
 
     converters = if spec_config['converters'].nil?
                    str_converter = StrConverter.new

@@ -3,7 +3,7 @@
 # CaseFixture.java, containing an actual and specific combination of variables.
 class RastSpec
   attr_reader :variables, :pair, :pair_reversed, :rule, :description,
-              :exempt_rule, :converters
+              :exclude_clause, :converters
 
   attr_accessor :exclude
 
@@ -13,7 +13,7 @@ class RastSpec
     @pair = {}
     @pair_reversed = {}
     @rule = rule
-    @exempt_rule = nil
+    @exclude_clause = nil
   end
 
   def init_pair(pair_config: {})
@@ -27,8 +27,8 @@ class RastSpec
     self
   end
 
-  def init_exempt_rule(exempt_rule)
-    @exempt_rule = exempt_rule
+  def init_exclusion(exclude_clause)
+    @exclude_clause = exclude_clause
     self
   end
 
