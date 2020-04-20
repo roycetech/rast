@@ -25,7 +25,7 @@ module LogicHelper
     elsif TRUE == left && TRUE == right
       TRUE
     elsif TRUE == left
-      if right_subscript.negative?
+      if right_subscript < 0
         scenario.include?(right).to_s
       else
         (scenario[right_subscript] == right).to_s
@@ -73,7 +73,7 @@ module LogicHelper
         (scenario[right_subscript] == right).to_s
       end
     elsif FALSE == right
-      if left_subscript.negative?
+      if left_subscript < 0
         scenario.include?(left).to_s
       else
         (scenario[left_subscript]).to_s == left
@@ -103,7 +103,7 @@ module LogicHelper
   #  * @param object left or right token.
   #  */
   def pevaluate(scenario: [], subscript: -1, object: nil)
-    if subscript.negative?
+    if subscript < 0
       scenario.include?(object)
     else
       scenario[subscript] == object

@@ -91,7 +91,7 @@ class RuleEvaluator
   def next_value(rule_token_convert: {}, default_converter: nil)
     subscript = -1
     retval = []
-    value = @stack_answer.pop&.strip
+    value = @stack_answer.pop
     if TRUE != value && FALSE != value
       subscript = extract_subscript(token: value.to_s)
       value_str = value.to_s.strip
@@ -182,7 +182,8 @@ class RuleEvaluator
 
     raise 'Some operator is missing' if @stack_answer.size > 1
 
-    @stack_answer.pop[1..]
+    last = @stack_answer.pop
+    last[1..last.size]
   end
 
   # /**

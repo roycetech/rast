@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description   = 'Extends RSpec functionality by using the catch-all-scenario testing (CAST) principle.'
   spec.homepage      = 'https://github.com/roycetech/rast'
   spec.license       = 'MIT'
-  spec.required_ruby_version = Gem::Requirement.new('>= 2.3.0')
+  spec.required_ruby_version = Gem::Requirement.new('~> 2.0')
 
   # spec.metadata['allowed_push_host'] = "TODO: Set to 'http://mygemserver.com'"
   # spec.metadata['homepage_uri'] = spec.homepage

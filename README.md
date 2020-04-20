@@ -23,3 +23,8 @@ clause - the right portion of a rule
 
 When running the tests, the execution starts at the spec file, then invoking the
 DSL. The DSL will then invoke the parameter generator to generate the scenarios.
+
+
+## Release Notes
+
+0.1.1.pre - Pre release version compatible with Ruby 2.0.0-p247

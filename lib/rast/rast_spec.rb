@@ -18,7 +18,9 @@ class RastSpec
 
   def init_pair(pair_config: {})
     @pair[pair_config.keys.first.to_s] = pair_config.values.first.to_s
-    @pair_reversed = [@pair.to_a.first.reverse].to_h
+
+    array = [@pair.to_a.first.reverse]
+    @pair_reversed = { "#{array.first}".to_sym => array.last }
     self
   end
 

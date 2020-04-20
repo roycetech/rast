@@ -76,7 +76,10 @@ def generate_rspec(scope: nil, scenario: {}, expected: '')
 
   it "[#{expected}]=[#{spec_params}]" do
     block_params = scenario.values
-    scope.prepare_block&.call(*block_params) unless scope.rspec_methods.any?
+
+    if scope.rspec_methods.size > 0 || !scope.prepare_block.nil?
+      scope.prepare_block.call(*block_params)
+    end
 
     while scope.rspec_methods.any?
       first_meth = scope.rspec_methods.shift
