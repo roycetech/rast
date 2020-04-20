@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative 'operator'
-require_relative 'logic_helper'
+require 'rast/rules/operator'
+require 'rast/rules/logic_helper'
 require 'rast/converters/int_converter'
 require 'rast/converters/bool_converter'
 require 'rast/converters/str_converter'

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'parameter_generator'
+require 'rast/parameter_generator'
 
 # Main DSL. This is the entry point of the test when running a spec.
 class SpecDSL

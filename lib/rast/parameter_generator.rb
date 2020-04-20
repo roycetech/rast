@@ -2,12 +2,12 @@
 
 require 'pry'
 require 'yaml'
-require_relative 'rast_spec'
-require_relative 'rules/rule'
-require_relative 'rules/rule_evaluator'
-require_relative 'rules/rule_validator'
+require 'rast/rast_spec'
+require 'rast/rules/rule'
+require 'rast/rules/rule_evaluator'
+require 'rast/rules/rule_validator'
 
-require_relative 'converters/float_converter'
+require 'rast/converters/float_converter'
 
 # Generates the test parameters.
 class ParameterGenerator
