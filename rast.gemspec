@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'lib/rast/version'
+require 'lib/rast/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'rast'
