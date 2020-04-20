@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
-require 'lib/rast/version'
-
 Gem::Specification.new do |spec|
   spec.name          = 'rast'
-  spec.version       = Rast::VERSION
+  spec.version       = '0.1.1.pre'.freeze
   spec.authors       = ['Royce Remulla']
   spec.email         = ['royce.com@gmail.com']
 
