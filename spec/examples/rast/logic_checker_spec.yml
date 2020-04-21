@@ -2,18 +2,12 @@
 specs:
   Logical AND:
     variables:
-      left:
-        - false
-        - true
-      right:
-        - false
-        - true
+      left: [false, true]
+      right: [false, true]
 
     exclude: 'false[0]&true[1]'
 
-    converters:
-      - BoolConverter
-      - BoolConverter
+    converters: [BoolConverter, BoolConverter]
 
     rules:
       true: 'true[0]&true[1]'
@@ -23,16 +17,10 @@ specs:
 
   Logical OR:
     variables:
-      left:
-        - false
-        - true
-      right:
-        - false
-        - true
+      left: [false, true]
+      right: [false, true]
 
-    converters:
-      - BoolConverter
-      - BoolConverter
+    converters: [BoolConverter, BoolConverter]
 
     rules:
       true: 'true[0]|true[1]'
