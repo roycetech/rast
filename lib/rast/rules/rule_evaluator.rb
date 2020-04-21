@@ -33,8 +33,8 @@ class RuleEvaluator
   }.freeze
 
   # /** @param pConverterList list of rule token converters. */
-  def initialize(converters: [])
-    @converters = converters
+  def initialize(converters: {})
+    @converters = converters.values
 
     @stack_operations = []
     @stack_rpn = []

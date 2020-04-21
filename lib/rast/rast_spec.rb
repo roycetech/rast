@@ -25,7 +25,12 @@ class RastSpec
   end
 
   def init_converters(converters: [])
-    @converters = converters
+    @converters = {}
+
+    @variables.keys.each_with_index do |key, index|
+      @variables[key].each { |element| @converters[element.to_s] = converters[index] }
+    end
+
     self
   end
 

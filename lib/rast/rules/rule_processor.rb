@@ -35,7 +35,7 @@ class RuleProcessor
 
     list << rule_evaluator.evaluate(
       scenario: scenario,
-      rule_token_convert: fixture[:converter_hash]
+      rule_token_convert: spec.converters
     )
   end
 end

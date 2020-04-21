@@ -13,8 +13,6 @@ require 'rast/converters/float_converter'
 class ParameterGenerator
   def initialize(yaml_path: '')
     @specs_config = YAML.load_file(yaml_path)['specs']
-
-    # p @specs_config
   end
 
   # addCase. Generate the combinations, then add the fixture to the final list
@@ -32,6 +30,7 @@ class ParameterGenerator
 
     (1...variables.size).each { |i| multipliers << variables.values[i].dup }
     scenarios = var_first.last.product(*multipliers)
+
     add_fixtures(scenarios: scenarios, spec: spec, list: list)
     list
   end
@@ -44,6 +43,7 @@ class ParameterGenerator
     exclude_clause = spec.exclude_clause
     rule_evaluator = RuleEvaluator.new(converters: spec.converters)
     rule_evaluator.parse(expression: exclude_clause)
+
     rule_evaluator.evaluate(scenario: scenario, rule_token_convert: spec.converters) == "false"
   end
 
@@ -60,15 +60,6 @@ class ParameterGenerator
 
   def build_param(validator, scenario, spec)
     param = { spec: spec, scenario: {} }
-    token_converter = {}
-
-    spec.variables.keys.each_with_index do |key, index|
-      spec.variables[key].each do |element|
-        unless spec.converters.nil?
-          token_converter[element.to_s] = spec.converters[index]
-        end
-      end
-    end
 
     spec.variables.keys.zip(scenario) do |array|
       var_name = array.first.to_sym
@@ -76,7 +67,6 @@ class ParameterGenerator
       param[:scenario][var_name] = var_value
     end
 
-    param[:converter_hash] = token_converter
     param[:expected_outcome] = validator.validate(
       scenario: scenario,
       fixture: param
