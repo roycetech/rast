@@ -32,7 +32,7 @@ class RuleValidator
     matched_outputs = []
     match_count = 0
 
-    rule_result.map { |result| result == 'true' }.each_with_index do |result, i|
+    rule_result.map { |result| result.to_s == 'true' }.each_with_index do |result, i|
       next unless result
 
       match_count += 1

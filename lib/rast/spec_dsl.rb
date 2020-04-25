@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 
+require 'factory_girl'
 require 'rast/parameter_generator'
 
 # Main DSL. This is the entry point of the test when running a spec.
 class SpecDSL
-  attr_accessor :subject, :rspec_methods, :execute_block, :prepare_block,
-                :transients, :outcomes, :fixtures
+  include FactoryGirl::Syntax::Methods
+
+  attr_accessor :subject, :rspec_methods, :execute_block,
+                :prepare_block, :transients, :outcomes, :fixtures
 
   def initialize(subject: nil, fixtures: [], &block)
     @subject = subject
@@ -46,7 +49,10 @@ class SpecDSL
   def execute(&block)
     @execute_block = block
 
-    @fixtures.sort_by! { |fixture| fixture[:expected_outcome] + fixture[:scenario].to_s }
+    @fixtures.sort_by! do |fixture|
+      fixture[:expected_outcome] + fixture[:scenario].to_s
+    end
+
     generate_rspecs
   end
 

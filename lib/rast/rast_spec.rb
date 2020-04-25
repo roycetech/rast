@@ -20,7 +20,7 @@ class RastSpec
     @pair[pair_config.keys.first.to_s] = pair_config.values.first.to_s
 
     array = [@pair.to_a.first.reverse]
-    @pair_reversed = { "#{array.first}".to_sym => array.last }
+    @pair_reversed = { array.first.to_s.to_sym => array.last }
     self
   end
 
@@ -28,7 +28,9 @@ class RastSpec
     @converters = {}
 
     @variables.keys.each_with_index do |key, index|
-      @variables[key].each { |element| @converters[element.to_s] = converters[index] }
+      @variables[key].each do |element|
+        @converters[element.to_s] = converters[index]
+      end
     end
 
     self
