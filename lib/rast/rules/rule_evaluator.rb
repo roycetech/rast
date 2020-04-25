@@ -3,6 +3,7 @@
 require 'rast/rules/operator'
 require 'rast/rules/logic_helper'
 require 'rast/converters/int_converter'
+require 'rast/converters/float_converter'
 require 'rast/converters/bool_converter'
 require 'rast/converters/str_converter'
 
@@ -19,7 +20,7 @@ class RuleEvaluator
 
   # the "false" part of the "false[1]"
   RE_TOKEN_BODY = /^.+(?=\[)/.freeze
-  RE_TOKENS = /([!|)(&])|([a-zA-Z\s0-9]+\[\d\])/.freeze
+  RE_TOKENS = /([!|)(&])|([a-zA-Z\s0-9-]+\[\d\])/.freeze
 
   def self.operator_from_symbol(symbol: nil)
     OPERATORS.find { |operator| operator.symbol == symbol }
@@ -27,6 +28,7 @@ class RuleEvaluator
 
   DEFAULT_CONVERT_HASH = {
     Integer => IntConverter.new,
+    Float => FloatConverter.new,
     TrueClass => BoolConverter.new,
     FalseClass => BoolConverter.new,
     String => StrConverter.new

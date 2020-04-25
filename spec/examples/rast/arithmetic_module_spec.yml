@@ -1,0 +1,16 @@
+---
+specs:
+  addition:
+    variables:
+      left: [-1, 0, 2]
+      right: [-1, 0, 2]
+
+    converters: [FloatConverter, FloatConverter]
+
+    rules:
+      -2: -1[0]&-1[1]
+      -1: -1[0]&0[1]|0[0]&-1[1]
+      0: 0[0]&0[1]
+      1: -1[0]&2[1]|2[0]&-1[1]
+      2: 2[0]&0[1]|0[0]&2[1]
+      4: 2[0]&2[1]
