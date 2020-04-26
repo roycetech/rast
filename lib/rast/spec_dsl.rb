@@ -10,8 +10,11 @@ class SpecDSL
   attr_accessor :subject, :rspec_methods, :execute_block,
                 :prepare_block, :transients, :outcomes, :fixtures
 
-  def initialize(subject: nil, fixtures: [], &block)
+  def initialize(subject: nil, name: '', fixtures: [], &block)
     @subject = subject
+
+    # cannot derive name from subject when sut is a module.
+    @subject_name = name || subject.class
     @fixtures = fixtures
 
     @transients = []
@@ -62,7 +65,7 @@ class SpecDSL
     spec = @fixtures.first[:spec]
     main_scope = self
 
-    RSpec.describe "#{@subject.class}: #{spec.description}" do
+    RSpec.describe "#{@subject_name}: #{spec.description}" do
       main_scope.fixtures.each do |fixture|
         generate_rspec(
           scope: main_scope,
@@ -104,6 +107,6 @@ def generate_rspec(scope: nil, scenario: {}, expected: '')
 end
 
 # DSL Entry Point
-def spec(subject: nil, fixtures: [], &block)
-  SpecDSL.new(subject: subject, fixtures: fixtures, &block)
+def spec(subject: nil, name: '', fixtures: [], &block)
+  SpecDSL.new(subject: subject, name: name, fixtures: fixtures, &block)
 end

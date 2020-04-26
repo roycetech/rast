@@ -24,6 +24,8 @@ class Rast
                  rasted_subject.new
                end
 
+    @subject_name =rasted_subject
+
     spec_path = caller[2][/spec.*?\.rb/]
     yaml_path = spec_path.gsub(/(\w+).rb/, 'rast/\\1.yml')
 
@@ -35,6 +37,7 @@ class Rast
   def spec(id, &block)
     global_spec(
       subject: @subject,
+      name: @subject_name,
       fixtures: @generator.generate_fixtures(spec_id: id),
       &block
     )
