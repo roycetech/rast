@@ -85,11 +85,11 @@ class SpecDSL
     if @fixtures.nil?
       parameter_generator = ParameterGenerator.new
       parameter_generator.specs_config = { @spec_id => {
-          'variables' => @variables,
-          'pair' => @pair,
-          'converters' => @converters,
-          'rules' => @rules,
-          'exclude' => @exclude
+        'variables' => @variables,
+        'pair' => @pair,
+        'converters' => @converters,
+        'rules' => @rules,
+        'exclude' => @exclude
       } }
 
       @fixtures = parameter_generator.generate_fixtures(spec_id: @spec_id)
