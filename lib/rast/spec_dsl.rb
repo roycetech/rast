@@ -10,8 +10,14 @@ class SpecDSL
   attr_accessor :subject, :rspec_methods, :execute_block,
                 :prepare_block, :transients, :outcomes, :fixtures
 
-  def initialize(subject: nil, name: '', fixtures: [], &block)
+  # # yaml-less
+  attr_writer :variables, :exclude, :converters, :rules, :pair
+
+  # @subject the sut instance
+  # @name the sut name to be displayed with -fd
+  def initialize(subject: nil, name: '', fixtures: [], spec_id: '', &block)
     @subject = subject
+    @spec_id = spec_id
 
     # cannot derive name from subject when sut is a module.
     @subject_name = name || subject.class
@@ -33,6 +39,7 @@ class SpecDSL
   end
 
   def method_missing(method_name_symbol, *args, &block)
+    # p "method_missing: #{method_name_symbol}"
     return super if method_name_symbol == :to_ary
 
     @rspec_methods << {
@@ -44,6 +51,29 @@ class SpecDSL
     self
   end
 
+  # yaml-less start
+  def variables(vars)
+    @variables = vars
+  end
+
+  def exclude(clause)
+    @exclude = clause
+  end
+
+  def converters(&block)
+    @converters = instance_eval(&block)
+  end
+
+  def rules(rules)
+    @rules = rules
+  end
+
+  def pair(pair)
+    @pair = pair
+  end
+
+  # yaml-less end
+
   def prepare(&block)
     @prepare_block = block
     @transients
@@ -51,6 +81,19 @@ class SpecDSL
 
   def execute(&block)
     @execute_block = block
+
+    if @fixtures.nil?
+      parameter_generator = ParameterGenerator.new
+      parameter_generator.specs_config = { @spec_id => {
+          'variables' => @variables,
+          'pair' => @pair,
+          'converters' => @converters,
+          'rules' => @rules,
+          'exclude' => @exclude
+      } }
+
+      @fixtures = parameter_generator.generate_fixtures(spec_id: @spec_id)
+    end
 
     @fixtures.sort_by! do |fixture|
       fixture[:expected_outcome] + fixture[:scenario].to_s
@@ -107,6 +150,12 @@ def generate_rspec(scope: nil, scenario: {}, expected: '')
 end
 
 # DSL Entry Point
-def spec(subject: nil, name: '', fixtures: [], &block)
-  SpecDSL.new(subject: subject, name: name, fixtures: fixtures, &block)
+def spec(subject: nil, name: '', fixtures: [], spec_id: '', &block)
+  SpecDSL.new(
+    subject: subject,
+    name: name,
+    fixtures: fixtures,
+    spec_id: spec_id,
+    &block
+  )
 end

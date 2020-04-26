@@ -11,12 +11,17 @@ require 'rast/converters/float_converter'
 
 # Generates the test parameters.
 class ParameterGenerator
+  # Allow access so yaml-less can build the config via dsl.
+  attr_accessor :specs_config
+
   def initialize(yaml_path: '')
-    @specs_config = YAML.load_file(yaml_path)['specs']
+    @specs_config = YAML.load_file(yaml_path)['specs'] if File.exist? yaml_path
   end
 
   # addCase. Generate the combinations, then add the fixture to the final list
   def generate_fixtures(spec_id: '')
+    return nil if @specs_config.nil?
+
     spec_config = @specs_config[spec_id]
 
     spec_config[:description] = spec_id
@@ -90,10 +95,12 @@ class ParameterGenerator
     converters = if spec_config['converters'].nil?
                    str_converter = StrConverter.new
                    spec_config['variables'].map { |_var| str_converter }
-                 else
+                 elsif spec_config['converters'].first.class == String
                    spec_config['converters'].map do |converter|
                      Object.const_get(converter).new
                    end
+                 else
+                   spec_config['converters']
                  end
 
     spec.init_converters(converters: converters)
