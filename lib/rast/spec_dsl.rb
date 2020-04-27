@@ -105,10 +105,8 @@ class SpecDSL
   private
 
   def generate_rspecs
-    spec = @fixtures.first[:spec]
     main_scope = self
-
-    RSpec.describe "#{@subject_name}: #{spec.description}" do
+    RSpec.describe "#{@subject_name}: #{@fixtures.first[:spec].description}" do
       main_scope.fixtures.each do |fixture|
         generate_rspec(
           scope: main_scope,

@@ -238,7 +238,7 @@ class RuleEvaluator
                LogicHelper::TRUE
              else
                subscript = extract_subscript(token: left)
-               if subscript.negative?
+               if subscript < 0
                  (!scenario.include?(left)).to_s
                else
                  default_converter = DEFAULT_CONVERT_HASH[scenario.first.class]

@@ -31,7 +31,7 @@ module LogicHelper
         (scenario[right_subscript] == right).to_s
       end
     elsif TRUE == right
-      if left_subscript.negative?
+      if left_subscript < 0
         scenario.include?(left).to_s
       else
         (scenario[left_subscript] == left).to_s
@@ -67,7 +67,7 @@ module LogicHelper
     elsif FALSE == left && FALSE == right
       FALSE
     elsif FALSE == left
-      if right_subscript.negative?
+      if right_subscript < 0
         scenario.include?(right).to_s
       else
         (scenario[right_subscript] == right).to_s
