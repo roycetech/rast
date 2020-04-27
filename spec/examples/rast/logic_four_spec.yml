@@ -1,0 +1,16 @@
+---
+specs:
+  Four:
+    variables:
+      left: [false, true]
+      right: [false, true]
+      third: [false, true]
+      type: [a, b]
+
+    converters: [BoolConverter, BoolConverter, BoolConverter, StrConverter]
+
+    rules:
+      true: 'false[0]&false[1]&false[2]&a'
+
+    pair:
+      true: false

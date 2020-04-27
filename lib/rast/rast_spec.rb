@@ -2,8 +2,10 @@
 
 # CaseFixture.java, containing an actual and specific combination of variables.
 class RastSpec
+  # token_converter is the mapping of a variable token to a converter
+  # converters is a list of converters used via positional tokens.
   attr_reader :variables, :pair, :pair_reversed, :rule, :description,
-              :exclude_clause, :converters
+              :exclude_clause, :token_converter, :converters
 
   attr_accessor :exclude
 
@@ -25,11 +27,12 @@ class RastSpec
   end
 
   def init_converters(converters: [])
-    @converters = {}
+    @converters = converters
+    @token_converter = {}
 
     @variables.keys.each_with_index do |key, index|
       @variables[key].each do |element|
-        @converters[element.to_s] = converters[index]
+        @token_converter[element.to_s] = converters[index]
       end
     end
 
