@@ -1,0 +1,14 @@
+---
+specs:
+  '#process':
+    variables:
+      With_Sim: [false, true]
+      Best: [false, true]
+
+    converters: [BoolConverter, BoolConverter]
+
+    rules:
+      true: 'true[0]&true[1]'
+
+    pair:
+      true: false

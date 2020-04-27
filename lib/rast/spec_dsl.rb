@@ -128,17 +128,7 @@ def generate_rspec(scope: nil, scenario: {}, expected: '')
     block_params = scenario.values
 
     if scope.rspec_methods.size > 0 || !scope.prepare_block.nil?
-      scope.prepare_block.call(*block_params)
-    end
-
-    while scope.rspec_methods.any?
-      first_meth = scope.rspec_methods.shift
-      second_meth = scope.rspec_methods.shift
-      if first_meth[:name] == :allow && second_meth[:name] == :receive
-        allow(scope.subject)
-          .to receive(second_meth[:args], &second_meth[:block])
-      end
-      scope.rspec_methods.shift
+      instance_exec(scope.subject, *block_params, &scope.prepare_block)
     end
 
     actual = scope.execute_block.call(*block_params).to_s
