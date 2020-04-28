@@ -106,7 +106,12 @@ class SpecDSL
 
   def generate_rspecs
     main_scope = self
-    RSpec.describe "#{@subject_name}: #{@fixtures.first[:spec].description}" do
+
+    title = "#{@subject_name}: #{@fixtures.first[:spec].description}"
+    exclusion = fixtures.first[:spec].exclude_clause
+    title += ", Excluded: '#{exclusion}'" if exclusion
+
+    RSpec.describe title do
       main_scope.fixtures.each do |fixture|
         generate_rspec(
           scope: main_scope,

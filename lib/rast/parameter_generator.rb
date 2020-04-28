@@ -90,19 +90,40 @@ class ParameterGenerator
     pair_config = spec_config['pair']
     spec.init_pair(pair_config: pair_config) unless pair_config.nil?
 
-    spec.init_exclusion(spec_config['exclude']) unless spec_config['exclude'].nil?
+    unless spec_config['exclude'].nil?
+      spec.init_exclusion(spec_config['exclude'])
+    end
 
-    converters = if spec_config['converters'].nil?
+    converters_config = spec_config['converters']
+    converters = if converters_config.nil?
+                   # when no converters defined, we detect if type is consistent, otherwise assume it's string.
                    str_converter = StrConverter.new
-                   spec_config['variables'].map { |_var| str_converter }
-                 elsif spec_config['converters'].first.class == String
+                   spec_config['variables'].map do |_key, array|
+                     if same_data_type(array)
+                       RuleEvaluator::DEFAULT_CONVERT_HASH[array.first.class]
+                     else
+                       str_converter
+                     end
+                   end
+                 elsif converters_config.first.class == String
+                   # when converters defined, determined by the converter name as String.
                    spec_config['converters'].map do |converter|
                      Object.const_get(converter).new
                    end
                  else
-                   spec_config['converters']
+                   # converters defined, probably programmatically when yaml-less, just return it.
+                   converters_config
                  end
 
     spec.init_converters(converters: converters)
+  end
+
+  def same_data_type(array)
+    type = array.first.class
+    array.each do |element|
+      return false if element.class != type &&
+                      ![FalseClass, TrueClass].include?(element.class)
+    end
+    true
   end
 end
