@@ -28,11 +28,11 @@ class Rule
       end
 
       duplicates << outcome
-      clause = remove_spaces(string: clause, separator: '\(')
-      clause = remove_spaces(string: clause, separator: '\)')
-      clause = remove_spaces(string: clause, separator: '&')
-      clause = remove_spaces(string: clause, separator: '\|')
-      clause = remove_spaces(string: clause, separator: '!')
+      clause = remove_spaces(token: clause, separator: '\(')
+      clause = remove_spaces(token: clause, separator: '\)')
+      clause = remove_spaces(token: clause, separator: '&')
+      clause = remove_spaces(token: clause, separator: '\|')
+      clause = remove_spaces(token: clause, separator: '!')
       @outcome_clause_hash[outcome.to_s] = clause.strip
     end
   end
@@ -47,8 +47,8 @@ class Rule
   #  * @param string rule clause.
   #  * @param separator rule clause token.
   #  */
-  def remove_spaces(string: '', separator: '')
-    string.gsub(Regexp.new("\\s*#{separator} \\s*"), separator)
+  def remove_spaces(token: nil, separator: '')
+    token.to_s.gsub(Regexp.new("\\s*#{separator} \\s*"), separator)
   end
 
   # /**

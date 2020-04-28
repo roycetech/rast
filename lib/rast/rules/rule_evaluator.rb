@@ -29,6 +29,7 @@ class RuleEvaluator
   DEFAULT_CONVERT_HASH = {
     Integer => IntConverter.new,
     Float => FloatConverter.new,
+    Fixnum => FloatConverter.new,
     TrueClass => BoolConverter.new,
     FalseClass => BoolConverter.new,
     String => StrConverter.new
@@ -77,7 +78,7 @@ class RuleEvaluator
     if @stack_rpn.empty?
       true
     elsif @stack_rpn.size == 1
-      evaluate_one_rpn(scenario: scenario)
+      evaluate_one_rpn(scenario: scenario).to_s
     else
       evaluate_multi_rpn(
         scenario: scenario,
@@ -258,11 +259,11 @@ class RuleEvaluator
   def evaluate_one_rpn(scenario: [])
     single = @stack_rpn.last
     subscript = extract_subscript(token: single)
+    default_converter = DEFAULT_CONVERT_HASH[scenario.first.class]
     if subscript > -1
-      default_converter = DEFAULT_CONVERT_HASH[scenario.first.class]
       scenario[subscript] == default_converter.convert(single[RE_TOKEN_BODY])
     else
-      scenario.include? single
+      scenario.include?(default_converter.convert(single))
     end
   end
 
