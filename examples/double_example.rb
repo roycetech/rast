@@ -2,11 +2,13 @@
 
 # Example
 class DoubleExample
-  def sim();end
+  def sim; end
+
+  def product; end
 
   def process
-    return false if sim.nil?
+    return false if sim.nil? || product.nil?
 
-    sim.best?
+    sim.best? && product.key == 'ayg'
   end
 end

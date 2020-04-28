@@ -49,7 +49,7 @@ class ParameterGenerator
     rule_evaluator = RuleEvaluator.new(converters: spec.converters)
     rule_evaluator.parse(expression: exclude_clause)
 
-    rule_evaluator.evaluate(scenario: scenario, rule_token_convert: spec.converters) == "false"
+    rule_evaluator.evaluate(scenario: scenario, rule_token_convert: spec.token_converter) == "false"
   end
 
   # add all fixtures to the list.

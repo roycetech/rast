@@ -2,13 +2,17 @@
 specs:
   '#process':
     variables:
-      With_Sim: [false, true]
+      With Sim: [false, true]
+      With Product: [false, true]
       Best: [false, true]
+      Product: [non-ayg, ayg]
 
-    converters: [BoolConverter, BoolConverter]
+    converters: [BoolConverter, BoolConverter, BoolConverter, StrConverter]
+
+    exclude: 'false[1]&ayg|false[0]&true[2]'
 
     rules:
-      true: 'true[0]&true[1]'
+      AYG Best: 'true[0]&true[1]&true[2]&ayg'
 
     pair:
-      true: false
+      AYG Best: 'FALSE'

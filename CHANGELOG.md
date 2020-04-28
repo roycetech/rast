@@ -1,5 +1,7 @@
 # Change log
 
+- 0.6.1.pre - Bugfix on the converters when used with rule exclusion.
+- 0.6.0.pre - Reverted redesign.
 - 0.5.0.pre - Redesigned to have subject as first block parameter. Everything inside
 the prepare block now runs under the context of RSpec.
 - 0.4.2.pre - Fix 4 tokens bug, due to mis-configured converters

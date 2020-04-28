@@ -127,8 +127,13 @@ def generate_rspec(scope: nil, scenario: {}, expected: '')
   it "[#{expected}]=[#{spec_params}]" do
     block_params = scenario.values
 
+    @mysubject = scope.subject
+    class << self
+      define_method(:subject) { @mysubject }
+    end
+
     if scope.rspec_methods.size > 0 || !scope.prepare_block.nil?
-      instance_exec(scope.subject, *block_params, &scope.prepare_block)
+      instance_exec(*block_params, &scope.prepare_block)
     end
 
     actual = scope.execute_block.call(*block_params).to_s
