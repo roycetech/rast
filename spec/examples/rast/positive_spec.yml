@@ -4,8 +4,6 @@ specs:
     variables:
       number: [-1, 0, 1]
 
-    converters: [FloatConverter]
-
     rules:
       true: 1
 

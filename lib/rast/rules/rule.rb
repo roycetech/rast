@@ -28,13 +28,17 @@ class Rule
       end
 
       duplicates << outcome
-      clause = remove_spaces(token: clause, separator: '\(')
-      clause = remove_spaces(token: clause, separator: '\)')
-      clause = remove_spaces(token: clause, separator: '&')
-      clause = remove_spaces(token: clause, separator: '\|')
-      clause = remove_spaces(token: clause, separator: '!')
-      @outcome_clause_hash[outcome.to_s] = clause.strip
+
+      @outcome_clause_hash[outcome.to_s] = Rule.sanitize(clause: clause)
     end
+  end
+
+  def self.sanitize(clause: '')
+    cleaner = Rule.remove_spaces(token: clause, separator: '(')
+    cleaner = Rule.remove_spaces(token: cleaner, separator: ')')
+    cleaner = Rule.remove_spaces(token: cleaner, separator: '&')
+    cleaner = Rule.remove_spaces(token: cleaner, separator: '|')
+    Rule.remove_spaces(token: cleaner, separator: '!').strip
   end
 
   def size
@@ -47,8 +51,12 @@ class Rule
   #  * @param string rule clause.
   #  * @param separator rule clause token.
   #  */
-  def remove_spaces(token: nil, separator: '')
-    token.to_s.gsub(Regexp.new("\\s*#{separator} \\s*"), separator)
+  def self.remove_spaces(token: nil, separator: '')
+    if ['(',')', '|'].include? separator
+      token.to_s.gsub(Regexp.new("\\s*\\#{separator}\\s*"), separator)
+    else
+      token.to_s.gsub(Regexp.new("\\s*#{separator}\\s*"), separator)
+    end
   end
 
   # /**

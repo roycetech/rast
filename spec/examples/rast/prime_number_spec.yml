@@ -2,22 +2,9 @@
 specs:
   '#prime?':
     variables:
-      number:
-        - -4
-        - -1
-        - 0
-        - 1
-        - 2
-        - 3
-        - 4
-        - 5
-        - 3331
-        - 5551
-
-    converters:
-      - IntConverter
+      number: [-4, -1, 0, 1, 2, 3, 4, 5, 3331, 5551]
 
     rules:
-      ERROR: -4|-1|0
-      false: 1|4|5551
-      true: 2|3|5|3331
+      ERROR: -4 | -1 | 0
+      false: 1 | 4 | 5551
+      true: 2 | 3 | 5 | 3331

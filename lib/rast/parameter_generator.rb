@@ -45,7 +45,7 @@ class ParameterGenerator
   def valid_case?(scenario, spec)
     return true if spec.exclude_clause.nil?
 
-    exclude_clause = spec.exclude_clause
+    exclude_clause = Rule.sanitize(clause: spec.exclude_clause)
     rule_evaluator = RuleEvaluator.new(converters: spec.converters)
     rule_evaluator.parse(expression: exclude_clause)
 

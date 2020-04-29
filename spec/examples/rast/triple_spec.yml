@@ -7,7 +7,7 @@ specs:
       three: [false, true]
 
     rules:
-      true: 'true[0]&true[1]'
+      true: 'true[0] & true[1]'
 
     pair:
       true: false

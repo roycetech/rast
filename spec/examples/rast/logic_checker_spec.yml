@@ -5,12 +5,10 @@ specs:
       left: [false, true]
       right: [false, true]
 
-    exclude: 'false[0]&true[1]'
-
-    converters: [BoolConverter, BoolConverter]
+    exclude: 'false[0] & true[1]'
 
     rules:
-      true: 'true[0]&true[1]'
+      true: 'true[0] & true[1]'
 
     pair:
       true: false
@@ -20,10 +18,8 @@ specs:
       left: [false, true]
       right: [false, true]
 
-    converters: [BoolConverter, BoolConverter]
-
     rules:
-      true: 'true[0]|true[1]'
+      true: 'true[0] | true[1]'
 
     pair:
       true: false

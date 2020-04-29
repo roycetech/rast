@@ -1,5 +1,6 @@
 # Change log
 
+- 0.8.1.pre - Allow spaces in rules.
 - 0.8.0.pre - Auto-detect variable type.
 - 0.7.0.pre - Display exclusion rule in the report
 - 0.6.2.pre - Bugfix for 1D array of numbers scenario.

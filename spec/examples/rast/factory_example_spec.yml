@@ -2,10 +2,7 @@
 specs:
   '#phone_plan_name':
     variables:
-      service_type:
-        - ayg
-        - data
-        - unl
+      service_type: [ayg, data, unl]
 
     rules:
       AS YOU GO: ayg

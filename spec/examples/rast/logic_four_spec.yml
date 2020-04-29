@@ -7,10 +7,8 @@ specs:
       third: [false, true]
       type: [a, b]
 
-    converters: [BoolConverter, BoolConverter, BoolConverter, StrConverter]
-
     rules:
-      true: 'false[0]&false[1]&false[2]&a'
+      true: 'false[0] & false[1] & false[2] & a'
 
     pair:
       true: false
