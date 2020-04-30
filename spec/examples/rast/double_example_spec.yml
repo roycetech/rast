@@ -7,10 +7,6 @@ specs:
       Best: [false, true]
       Product: [non-ayg, ayg]
 
-    exclude: 'false[1] & ayg | false[0] & true[2]'
-
-    rules:
-      AYG Best: 'true[0] & true[1] & true[2] & ayg'
-
-    pair:
-      AYG Best: 'FALSE'
+    exclude: false[1] & ayg | false[0] & true[2]
+    rules: { AYG Best: 'true[0] & true[1] & true[2] & ayg' }
+    pair: { AYG Best: 'FALSE' }

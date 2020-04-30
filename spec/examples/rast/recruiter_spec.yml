@@ -2,10 +2,7 @@
 specs:
   '#assess':
     variables:
-      Position:
-        - Manager
-        - Senior Engineer
-        - Engineer
+      Position: [Engineer, Senior Engineer, Manager]
       Score: [5, 6, 7, 8, 9, 10]
 
     rules:

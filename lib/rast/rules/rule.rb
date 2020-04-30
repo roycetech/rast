@@ -52,11 +52,8 @@ class Rule
   #  * @param separator rule clause token.
   #  */
   def self.remove_spaces(token: nil, separator: '')
-    if ['(',')', '|'].include? separator
-      token.to_s.gsub(Regexp.new("\\s*\\#{separator}\\s*"), separator)
-    else
-      token.to_s.gsub(Regexp.new("\\s*#{separator}\\s*"), separator)
-    end
+    escape = %w[( ) |].include?(separator) ? '\\' : ''
+    token.to_s.gsub(Regexp.new("\\s*#{escape}#{separator}\\s*"), separator)
   end
 
   # /**

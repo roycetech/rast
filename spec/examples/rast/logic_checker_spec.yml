@@ -5,21 +5,14 @@ specs:
       left: [false, true]
       right: [false, true]
 
-    exclude: 'false[0] & true[1]'
-
-    rules:
-      true: 'true[0] & true[1]'
-
-    pair:
-      true: false
+    exclude: false[0] & true[1]
+    rules: {true: 'true[0] & true[1]'}
+    pair: {true: false}
 
   Logical OR:
     variables:
       left: [false, true]
       right: [false, true]
 
-    rules:
-      true: 'true[0] | true[1]'
-
-    pair:
-      true: false
+    rules: {true: 'true[0] | true[1]'}
+    pair: {true: false}
