@@ -5,8 +5,6 @@ require './examples/triple'
 
 rast Triple do
   spec '#triple' do
-    execute do |one, two, three|
-      result subject.triple(one, two, three)
-    end
+    execute { |one, two, three| subject.triple(one, two, three) }
   end
 end

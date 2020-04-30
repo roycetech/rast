@@ -11,8 +11,6 @@ rast LogicChecker do
     rules({ true => 'true[0] & true[1]' })
     pair({ true => false })
 
-    execute do |left, right|
-      result subject.and(left, right)
-    end
+    execute { |left, right| subject.and(left, right) }
   end
 end

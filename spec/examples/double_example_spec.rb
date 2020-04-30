@@ -13,8 +13,6 @@ rast DoubleExample do
       end
     end
 
-    execute do
-      result subject.process ? 'AYG Best' : 'FALSE'
-    end
+    execute { subject.process ? 'AYG Best' : 'FALSE' }
   end
 end

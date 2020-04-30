@@ -24,14 +24,9 @@ class SpecDSL
     @fixtures = fixtures
 
     @transients = []
-    @result = nil
     @rspec_methods = []
 
     instance_eval(&block)
-  end
-
-  def result(outcome)
-    @outcome = outcome.to_s
   end
 
   def respond_to_missing?(*several_variants)

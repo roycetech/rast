@@ -5,8 +5,6 @@ require './examples/arithmetic_module'
 
 rast ArithmeticModule do
   spec 'addition' do
-    execute do |left, right|
-      result subject.add(left, right)
-    end
+    execute { |left, right| subject.add(left, right) }
   end
 end

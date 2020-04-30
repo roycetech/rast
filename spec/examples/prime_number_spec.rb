@@ -7,9 +7,9 @@ rast PrimeNumber do
   spec '#prime?' do
     execute do |number|
       begin
-        result subject.prime?(number)
+        subject.prime?(number)
       rescue StandardError
-        result(:ERROR)
+        :ERROR
       end
     end
   end

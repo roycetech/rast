@@ -5,14 +5,10 @@ require './examples/logic_checker'
 
 rast LogicChecker do
   spec 'Logical AND' do
-    execute do |left, right|
-      result subject.and(left, right)
-    end
+    execute { |left, right| subject.and(left, right) }
   end
 
   spec 'Logical OR' do
-    execute do |left, right|
-      result subject.or(left, right)
-    end
+    execute { |left, right| subject.or(left, right) }
   end
 end

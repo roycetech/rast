@@ -10,8 +10,6 @@ rast Worker do
       allow(subject).to receive(:holiday?) { day_type == 'Holiday' }
     end
 
-    execute do
-      result subject.goto_work? ? :Work : :Rest
-    end
+    execute { subject.goto_work? ? :Work : :Rest }
   end
 end

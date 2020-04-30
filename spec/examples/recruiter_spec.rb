@@ -10,8 +10,6 @@ rast Recruiter do
       allow(subject).to receive(:position) { position }
     end
 
-    execute do
-      result subject.assess
-    end
+    execute { subject.assess }
   end
 end
