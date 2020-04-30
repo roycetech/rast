@@ -3,7 +3,14 @@ specs:
   '#goto_work?':
     variables:
       Day Type: [Holiday, Regular Day]
-      Day of Week: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
+      Day of Week:
+        - Sunday
+        - Monday
+        - Tuesday
+        - Wednesday
+        - Thursday
+        - Friday
+        - Saturday
 
     rules: {Rest: Holiday | Sunday}
     pair: {Rest: Work}
