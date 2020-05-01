@@ -56,14 +56,19 @@ class RuleEvaluator
     @stack_operations.clear
     @stack_rpn.clear
 
-    # /* splitting input string into tokens */
-    tokens = expression.split(RE_TOKENS).reject(&:empty?)
+    tokens = RuleEvaluator.tokenize(clause: expression)
 
     # /* loop for handling each token - shunting-yard algorithm */
     tokens.each { |token| shunt_internal(token: token.strip) }
 
     @stack_rpn << @stack_operations.pop while @stack_operations.any?
     @stack_rpn.reverse!
+  end
+
+  # splitting input string into tokens
+  # @ clause - rule clause to be tokenized
+  def self.tokenize(clause: '')
+    clause.to_s.split(RE_TOKENS).reject(&:empty?)
   end
 
   # /**

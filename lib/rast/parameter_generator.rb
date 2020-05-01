@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'pry'
 require 'yaml'
 require 'rast/rast_spec'
 require 'rast/rules/rule'
@@ -80,7 +79,26 @@ class ParameterGenerator
     param
   end
 
+  # Detects if rule config has one outcome to one token mapping.
+  def one_to_one(outcome_to_clause)
+    outcome_to_clause.each do |outcome, clause|
+      return false if RuleEvaluator.tokenize(clause: clause).size > 1
+    end
+
+    true
+  end
+
+  # Used to optimize by detecting the variables if rules config is a 1 outcome to 1 rule token.
+  def detect_variables(spec_config)
+    return nil unless one_to_one(spec_config['rules'])
+
+    { vars: spec_config['rules'].values }
+  end
+
   def instantiate_spec(spec_config)
+
+    spec_config['variables'] = detect_variables(spec_config) if spec_config['variables'].nil?
+
     spec = RastSpec.new(
       description: spec_config[:description],
       variables: spec_config['variables'],

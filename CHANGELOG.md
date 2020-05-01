@@ -1,5 +1,6 @@
 # Change log
 
+- 0.10.0 - Optional variables definition for 1 to 1 rules.
 - 0.9.0 - execute return value is now the expected outcome (removed result method)
 - 0.8.1.pre - Allow spaces in rules.
 - 0.8.0.pre - Auto-detect variable type.

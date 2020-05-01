@@ -1,9 +1,9 @@
 ---
 specs:
   '#positive?':
+
     variables:
       number: [-1, 0, 1]
 
-    rules: { true: 1 }
-
-    pair: { true: false }
+    rules: {true: 1}
+    pair: {true: false}

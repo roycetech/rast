@@ -11,9 +11,6 @@ group :test do
   gem 'lumberjack', '~> 1.0', '>= 1.0.13'
   gem 'rb-inotify', '~> 0.9.10'
 
-  gem 'guard-rspec', require: false
-  gem 'pry'
-  gem 'pry-nav'
   gem 'rspec'
   gem 'simplecov', '~> 0.8.2'
 end

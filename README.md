@@ -11,6 +11,7 @@ RSpec All Scenario Testing
 `exemption/exclusions` - rule defining variable combinations to be excluded from the test.
 `outcome` - the left portion of a rule e.g. `true: true&true`
 `clause` - the right portion of a rule
+`token` - used loosely to denote the individual variable in a rule. e.g. `true: you & me`, 'you' and 'me' are tokens.
 
 
 ##
