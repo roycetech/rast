@@ -56,7 +56,12 @@ class RuleEvaluator
     @stack_operations.clear
     @stack_rpn.clear
 
-    tokens = RuleEvaluator.tokenize(clause: expression)
+    if expression.is_a?(Array)
+      tokens = expression
+    else
+      tokens = RuleEvaluator.tokenize(clause: expression)
+    end
+
 
     # /* loop for handling each token - shunting-yard algorithm */
     tokens.each { |token| shunt_internal(token: token.strip) }

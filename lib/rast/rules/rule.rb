@@ -34,6 +34,8 @@ class Rule
   end
 
   def self.sanitize(clause: '')
+    return clause if clause.is_a?(Array)
+    
     cleaner = Rule.remove_spaces(token: clause, separator: '(')
     cleaner = Rule.remove_spaces(token: cleaner, separator: ')')
     cleaner = Rule.remove_spaces(token: cleaner, separator: '&')

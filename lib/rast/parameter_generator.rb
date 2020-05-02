@@ -82,6 +82,8 @@ class ParameterGenerator
   # Detects if rule config has one outcome to one token mapping.
   def one_to_one(outcome_to_clause)
     outcome_to_clause.each do |outcome, clause|
+      next if clause.is_a?(Array) && clause.size == 1
+
       return false if RuleEvaluator.tokenize(clause: clause).size > 1
     end
 
@@ -92,12 +94,17 @@ class ParameterGenerator
   def detect_variables(spec_config)
     return nil unless one_to_one(spec_config['rules'])
 
+    tokens = spec_config['rules'].values
+    return { vars: tokens.map(&:first) } if tokens.first.is_a?(Array) && tokens.first.size == 1
+
     { vars: spec_config['rules'].values }
   end
 
   def instantiate_spec(spec_config)
 
-    spec_config['variables'] = detect_variables(spec_config) if spec_config['variables'].nil?
+    if spec_config['variables'].nil?
+      spec_config['variables'] = detect_variables(spec_config)
+    end
 
     spec = RastSpec.new(
       description: spec_config[:description],

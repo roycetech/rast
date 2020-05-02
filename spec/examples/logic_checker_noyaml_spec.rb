@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require './lib/rast'
-require './lib/rast/converters/bool_converter'
 require './examples/logic_checker'
 
 rast LogicChecker do
