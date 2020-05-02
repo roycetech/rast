@@ -1,5 +1,6 @@
 # Change log
 
+- 0.11.2 - Remove dependency to Factory girl from gemspec. - YANKED!
 - 0.11.1 - Add dependency to Factory girl, fixes to examples
 - 0.11.0 - Raw array as clause to support spaces and operator characters.
 - 0.10.0 - Optional variables definition for 1 to 1 rules.
