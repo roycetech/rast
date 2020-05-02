@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Checks bug introduced when converters was combined with token converter.
+# Checks bug introduced when converters are combined with token converter.
 #
 # @author Royce Remulla
 #

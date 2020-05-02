@@ -2,6 +2,6 @@
 specs:
   '#identify_sentence_type':
     rules:
-      exclamation: ['Let's do it!']
+      exclamation: ["Let's do it!"]
       question: ['Will this work?']
-      statement: ['Let's make a statement']
+      statement: ["Let's make a statement"]

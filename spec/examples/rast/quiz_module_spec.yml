@@ -1,0 +1,25 @@
+---
+specs:
+  '#quiz_multi_choice?':
+    variables:
+      parameter:
+        - nil
+        - "'string'"
+        - "[]"
+        - "['[] a']"  # none checked
+        - "['[x] a']"  # one and only checked
+        - "['[x] a', '[] b']"  # one checked
+        - "['[x] a', '[x] b', '[] c']"  # 2 checked
+        - "['[x] a', '[x] b']"  # all checked
+
+    rules:
+      'true':
+        - "['[x] a']"
+        - "|"
+        - "['[x] a', '[] b']"
+        - "|"
+        - "['[x] a', '[x] b', '[] c']"
+        - "|"
+        - "['[x] a', '[x] b']"
+
+    pair: {true: false}
