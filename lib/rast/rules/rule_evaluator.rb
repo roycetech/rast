@@ -4,6 +4,7 @@ require 'rast/rules/operator'
 require 'rast/rules/logic_helper'
 require 'rast/converters/int_converter'
 require 'rast/converters/float_converter'
+require 'rast/converters/default_converter'
 require 'rast/converters/bool_converter'
 require 'rast/converters/str_converter'
 
@@ -30,6 +31,7 @@ class RuleEvaluator
     Integer => IntConverter.new,
     Float => FloatConverter.new,
     Fixnum => FloatConverter.new,
+    Array => DefaultConverter.new,
     TrueClass => BoolConverter.new,
     FalseClass => BoolConverter.new,
     String => StrConverter.new
@@ -56,15 +58,14 @@ class RuleEvaluator
     @stack_operations.clear
     @stack_rpn.clear
 
-    if expression.is_a?(Array)
-      tokens = expression
-    else
-      tokens = RuleEvaluator.tokenize(clause: expression)
-    end
-
+    tokens = if expression.is_a?(Array)
+               expression
+             else
+               RuleEvaluator.tokenize(clause: expression)
+             end
 
     # /* loop for handling each token - shunting-yard algorithm */
-    tokens.each { |token| shunt_internal(token: token.strip) }
+    tokens.each { |token| shunt_internal(token: token) }
 
     @stack_rpn << @stack_operations.pop while @stack_operations.any?
     @stack_rpn.reverse!
@@ -105,6 +106,9 @@ class RuleEvaluator
     subscript = -1
     retval = []
     value = @stack_answer.pop
+
+    return [-1, value] if value.is_a? Array
+
     if TRUE != value && FALSE != value
       subscript = extract_subscript(token: value.to_s)
       value_str = value.to_s.strip
@@ -177,7 +181,7 @@ class RuleEvaluator
     # binding.pry
 
     while stack_rpn_clone.any?
-      token = stack_rpn_clone.pop.strip
+      token = stack_rpn_clone.pop
       if operator?(token: token)
         if NOT.symbol == token
           evaluate_multi_not(scenario: scenario)

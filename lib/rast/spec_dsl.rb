@@ -121,7 +121,7 @@ end
 def generate_rspec(scope: nil, scenario: {}, expected: '')
   spec_params = scenario.keys.inject('') do |output, key|
     output += ', ' unless output == ''
-    output + "#{key}: #{scenario[key]}"
+    output + "#{key}: #{scenario[key] || 'nil'}"
   end
 
   it "[#{expected}]=[#{spec_params}]" do

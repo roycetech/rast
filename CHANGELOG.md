@@ -1,5 +1,8 @@
 # Change log
 
+- 0.12.0 - Allow non-string tokens in the rules.
+- 0.11.6 - WIP moved factory girl as test and development dependency.
+- 0.11.5 - Change factory girl dependency
 - 0.11.4 - Fixed assert clash. Restored dependency to Factory girl.
 - 0.11.2 - Remove dependency to Factory girl from gemspec. - YANKED!
 - 0.11.1 - Add dependency to Factory girl, fixes to examples

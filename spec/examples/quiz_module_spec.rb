@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require './examples/quiz_module'
 require 'rast'
 

@@ -6,7 +6,7 @@ require 'rast/rules/rule'
 require 'rast/rules/rule_evaluator'
 require 'rast/rules/rule_validator'
 
-require 'rast/converters/float_converter'
+require 'rast/converters/default_converter'
 
 # Generates the test parameters.
 class ParameterGenerator
@@ -101,7 +101,6 @@ class ParameterGenerator
   end
 
   def instantiate_spec(spec_config)
-
     if spec_config['variables'].nil?
       spec_config['variables'] = detect_variables(spec_config)
     end
@@ -122,12 +121,12 @@ class ParameterGenerator
     converters_config = spec_config['converters']
     converters = if converters_config.nil?
                    # when no converters defined, we detect if type is consistent, otherwise assume it's string.
-                   str_converter = StrConverter.new
+                   default_converter = DefaultConverter.new
                    spec_config['variables'].map do |_key, array|
                      if same_data_type(array)
                        RuleEvaluator::DEFAULT_CONVERT_HASH[array.first.class]
                      else
-                       str_converter
+                       default_converter
                      end
                    end
                  elsif converters_config.first.class == String
