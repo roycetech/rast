@@ -13,4 +13,4 @@ specs:
         - Saturday
 
     rules: {Rest: Holiday | Sunday}
-    pair: {Rest: Work}
+    else: Work

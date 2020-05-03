@@ -114,7 +114,6 @@ class ParameterGenerator
     pair_config = calculate_pair(spec_config)
     spec.init_pair(pair_config: pair_config) unless pair_config.nil?
 
-
     unless spec_config['exclude'].nil?
       spec.init_exclusion(spec_config['exclude'])
     end
@@ -148,9 +147,16 @@ class ParameterGenerator
     return pair_config unless pair_config.nil?
 
     outcomes = spec_config['rules'].keys
-    if outcomes.size == 1 &&
-       [TrueClass, FalseClass].include?(outcomes.first.class)
-      return { outcomes.first => !outcomes.first }
+    if outcomes.size == 1
+      if [TrueClass, FalseClass].include?(outcomes.first.class)
+        return { outcomes.first => !outcomes.first }
+      end
+
+      if %w[true false].include?(outcomes.first)
+        return { outcomes.first => outcomes.first == 'true' ? 'false' : 'true' }
+      end
+
+      return { outcomes.first => spec_config['else'] } if spec_config['else']
     end
 
     {}

@@ -13,7 +13,7 @@ specs:
         - "['[x] a', '[x] b']"  # all checked
 
     rules:
-      'true':
+      true:
         - "['[x] a']"
         - "|"
         - "['[x] a', '[] b']"
@@ -21,5 +21,3 @@ specs:
         - "['[x] a', '[x] b', '[] c']"
         - "|"
         - "['[x] a', '[x] b']"
-
-    pair: {true: false}
