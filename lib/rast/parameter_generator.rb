@@ -111,8 +111,9 @@ class ParameterGenerator
       rule: Rule.new(rules: spec_config['rules'])
     )
 
-    pair_config = spec_config['pair']
+    pair_config = calculate_pair(spec_config)
     spec.init_pair(pair_config: pair_config) unless pair_config.nil?
+
 
     unless spec_config['exclude'].nil?
       spec.init_exclusion(spec_config['exclude'])
@@ -140,6 +141,19 @@ class ParameterGenerator
                  end
 
     spec.init_converters(converters: converters)
+  end
+
+  def calculate_pair(spec_config)
+    pair_config = spec_config['pair']
+    return pair_config unless pair_config.nil?
+
+    outcomes = spec_config['rules'].keys
+    if outcomes.size == 1 &&
+       [TrueClass, FalseClass].include?(outcomes.first.class)
+      return { outcomes.first => !outcomes.first }
+    end
+
+    {}
   end
 
   def same_data_type(array)

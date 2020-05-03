@@ -8,7 +8,6 @@ rast LogicChecker do
     variables({ left: [false, true], right: [false, true] })
     exclude('false[0] & true[1]')
     rules({ true => 'true[0] & true[1]' })
-    pair({ true => false })
 
     execute { |left, right| subject.and(left, right) }
   end

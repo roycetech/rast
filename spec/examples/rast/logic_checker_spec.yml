@@ -7,7 +7,6 @@ specs:
 
     exclude: false[0] & true[1]
     rules: {true: 'true[0] & true[1]'}
-    pair: {true: false}
 
   Logical OR:
     variables:
@@ -15,4 +14,3 @@ specs:
       right: [false, true]
 
     rules: {true: 'true[0] | true[1]'}
-    pair: {true: false}
