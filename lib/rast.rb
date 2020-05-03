@@ -34,6 +34,10 @@ class Rast
     instance_eval(&block)
   end
 
+  def self.assert(message)
+    raise message unless yield
+  end
+
   def spec(id, &block)
     global_spec(
       subject: @subject,

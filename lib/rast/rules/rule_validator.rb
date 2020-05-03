@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'rast/assert'
 require 'rast/rules/rule_processor'
 
 # Validates rules
@@ -38,7 +37,7 @@ class RuleValidator
       match_count += 1
       matched_outputs << spec.rule.outcomes[i]
     end
-    assert("Scenario must fall into a unique rule output/clause:
+    Rast.assert("Scenario must fall into a unique rule output/clause:
      #{scenario} , matched: #{matched_outputs}") { match_count == 1 }
 
     matched_outputs.first
