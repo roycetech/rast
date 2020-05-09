@@ -30,7 +30,7 @@ class RuleEvaluator
   DEFAULT_CONVERT_HASH = {
     Integer => IntConverter.new,
     Float => FloatConverter.new,
-    Fixnum => FloatConverter.new,
+    Fixnum => IntConverter.new,
     Array => DefaultConverter.new,
     TrueClass => BoolConverter.new,
     FalseClass => BoolConverter.new,
@@ -211,7 +211,8 @@ class RuleEvaluator
   def evaluate_multi(scenario: [], rule_token_convert: {}, operator: nil)
     default_converter = DEFAULT_CONVERT_HASH[scenario.first.class]
 
-    # binding.pry
+    # Convert 'nil' to nil.
+    formatted_scenario = scenario.map { |token| token == 'nil' ? nil: token }
 
     left_arr = next_value(
       rule_token_convert: rule_token_convert,
@@ -225,7 +226,7 @@ class RuleEvaluator
 
     answer = send(
       "perform_logical_#{operator.name}",
-      scenario: scenario,
+      scenario: formatted_scenario,
       left_subscript: left_arr[0],
       right_subscript: right_arr[0],
       left: left_arr[1],
