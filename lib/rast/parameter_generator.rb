@@ -24,6 +24,7 @@ class ParameterGenerator
     spec_config = @specs_config[spec_id]
 
     spec_config[:description] = spec_id
+    spec_config['rules'] ||= spec_config['outcomes']
     spec = instantiate_spec(spec_config)
 
     list = []

@@ -6,5 +6,5 @@ specs:
       two: [false, true]
       three: [false, true]
 
-    rules:
+    outcomes:
       true: true[0] & true[1]

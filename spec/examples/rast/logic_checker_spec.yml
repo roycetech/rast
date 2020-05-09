@@ -6,11 +6,11 @@ specs:
       right: [false, true]
 
     exclude: false[0] & true[1]
-    rules: {true: 'true[0] & true[1]'}
+    outcomes: {true: 'true[0] & true[1]'}
 
   Logical OR:
     variables:
       left: [false, true]
       right: [false, true]
 
-    rules: {true: 'true[0] | true[1]'}
+    outcomes: {true: 'true[0] | true[1]'}

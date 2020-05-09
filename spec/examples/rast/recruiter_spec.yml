@@ -5,7 +5,7 @@ specs:
       Position: [Engineer, Senior Engineer, Manager]
       Score: [5, 6, 7, 8, 9, 10]
 
-    rules:
+    outcomes:
       Over Qualified: Engineer & (9|10)
       Accept: Manager & 10 | Senior Engineer & (9|10) | Engineer & 8
       Shortlist: Manager & 9 | Senior Engineer & 8 | Engineer & 7

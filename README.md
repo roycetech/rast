@@ -1,5 +1,9 @@
 # Overview
+
 RSpec All Scenario Testing
+
+This library runs on top of RSpec to provide basically a parameterized unit testing pattern. It follows a specific pattern of writing unit tests, enabling a predictable, complete and easy to analyze report result.
+
 
 ## Definition of terms
 

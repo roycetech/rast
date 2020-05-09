@@ -12,5 +12,5 @@ specs:
         - Friday
         - Saturday
 
-    rules: {Rest: Holiday | Sunday}
+    outcomes: {Rest: Holiday | Sunday}
     else: Work

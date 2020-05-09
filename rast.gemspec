@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name          = 'rast'
-  spec.version       = '0.14.0'
+  spec.version       = '0.15.1'
   spec.authors       = ['Royce Remulla']
   spec.email         = ['royce.com@gmail.com']
 

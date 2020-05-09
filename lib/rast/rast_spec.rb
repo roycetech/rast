@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'rast/rules/rule_evaluator'
+
 # CaseFixture.java, containing an actual and specific combination of variables.
 class RastSpec
   # token_converter is the mapping of a variable token to a converter
@@ -32,7 +34,8 @@ class RastSpec
 
     @variables.keys.each_with_index do |key, index|
       @variables[key].each do |element|
-        @token_converter[element.to_s] = converters[index]
+        converter = RuleEvaluator::DEFAULT_CONVERT_HASH[element.class] || converters[index]
+        @token_converter[element.to_s] = converter
       end
     end
 

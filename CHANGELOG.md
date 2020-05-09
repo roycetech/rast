@@ -1,5 +1,6 @@
 # Change log
 
+- 0.15.1 - Fix converters when variable is multi typed.
 - 0.14.0 - Introduced an else config as substitute for pair.
 - 0.13.0 - Make pair in config optional for boolean result.
 - 0.12.0 - Allow non-string tokens in the rules.
