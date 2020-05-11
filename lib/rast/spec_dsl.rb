@@ -60,7 +60,17 @@ class SpecDSL
   end
 
   def rules(rules)
-    @rules = rules
+    @rules = {}
+
+    rules.each do |key, value|
+      calc_key = key
+      calc_key = key == :true if key == :true || key == :false
+      @rules[calc_key] = value
+    end
+  end
+
+  def outcomes(outcomes)
+    rules(outcomes)
   end
 
   def pair(pair)
@@ -129,6 +139,7 @@ def generate_rspec(scope: nil, scenario: {}, expected: '')
     block_params = scenario.values
 
     @mysubject = scope.subject
+
     class << self
       define_method(:subject) { @mysubject }
     end

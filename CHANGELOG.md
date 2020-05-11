@@ -1,5 +1,7 @@
 # Change log
 
+- 0.15.3 - Fix use of boolean as key to the config.
+         - Fix allow factory to be called inside both execute and prepare block.
 - 0.15.2 - Fix handling of nil token, and big integers.
 - 0.15.1 - Fix converters when variable is multi typed.
 - 0.14.0 - Introduced an else config as substitute for pair.

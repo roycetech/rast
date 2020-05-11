@@ -1,8 +1,5 @@
 ---
 specs:
   '#positive?':
-
-    variables:
-      number: [-1, 0, 1]
-
-    rules: {true: 1}
+    variables: {number: [-1, 0, 1]}
+    outcomes: {true: 1}

@@ -8,10 +8,6 @@ require 'rast/spec_dsl'
 class Rast
 # RSpec All scenario test
 #
-# Example:
-#   >> Hola.hi("spanish")
-#   => hola mundo
-#
 # Arguments:
 #   language: (String)
 
