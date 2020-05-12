@@ -13,4 +13,5 @@ specs:
       left: [false, true]
       right: [false, true]
 
+    include: true[0]
     outcomes: {true: 'true[0] | true[1]'}

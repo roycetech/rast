@@ -113,8 +113,11 @@ class SpecDSL
     main_scope = self
 
     title = "#{@subject_name}: #{@fixtures.first[:spec].description}"
+
     exclusion = fixtures.first[:spec].exclude_clause
-    title += ", Excluded: '#{exclusion}'" if exclusion
+    title += ", EXCLUDE: '#{exclusion}'" if exclusion
+    inclusion = fixtures.first[:spec].include_clause
+    title += ", ONLY: '#{inclusion}'" if inclusion
 
     RSpec.describe title do
       main_scope.fixtures.each do |fixture|

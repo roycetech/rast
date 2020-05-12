@@ -7,7 +7,7 @@ class RastSpec
   # token_converter is the mapping of a variable token to a converter
   # converters is a list of converters used via positional tokens.
   attr_reader :variables, :pair, :pair_reversed, :rule, :description,
-              :exclude_clause, :token_converter, :converters
+              :exclude_clause, :include_clause, :token_converter, :converters
 
   attr_accessor :exclude
 
@@ -18,6 +18,7 @@ class RastSpec
     @pair_reversed = {}
     @rule = rule
     @exclude_clause = nil
+    @include_clause = nil
   end
 
   def init_pair(pair_config: {})
@@ -44,6 +45,11 @@ class RastSpec
 
   def init_exclusion(exclude_clause)
     @exclude_clause = exclude_clause
+    self
+  end
+
+  def init_inclusion(include_clause)
+    @include_clause = include_clause
     self
   end
 

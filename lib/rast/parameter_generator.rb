@@ -43,13 +43,22 @@ class ParameterGenerator
   private
 
   def valid_case?(scenario, spec)
-    return true if spec.exclude_clause.nil?
+    return true if spec.exclude_clause.nil? && spec.include_clause.nil?
 
-    exclude_clause = Rule.sanitize(clause: spec.exclude_clause)
     rule_evaluator = RuleEvaluator.new(converters: spec.converters)
-    rule_evaluator.parse(expression: exclude_clause)
 
-    rule_evaluator.evaluate(scenario: scenario, rule_token_convert: spec.token_converter) == "false"
+    exclude_result = true
+    unless spec.exclude_clause.nil?
+      exclude_clause = Rule.sanitize(clause: spec.exclude_clause)
+      rule_evaluator.parse(expression: exclude_clause)
+      exclude_result = rule_evaluator.evaluate(scenario: scenario, rule_token_convert: spec.token_converter) == "false"
+    end
+
+    return exclude_result if spec.include_clause.nil?
+
+    include_clause = Rule.sanitize(clause: spec.include_clause)
+    rule_evaluator.parse(expression: include_clause)
+    rule_evaluator.evaluate(scenario: scenario, rule_token_convert: spec.token_converter) == "true"
   end
 
   # add all fixtures to the list.
@@ -117,6 +126,10 @@ class ParameterGenerator
 
     unless spec_config['exclude'].nil?
       spec.init_exclusion(spec_config['exclude'])
+    end
+
+    unless spec_config['include'].nil?
+      spec.init_inclusion(spec_config['include'])
     end
 
     converters_config = spec_config['converters']
