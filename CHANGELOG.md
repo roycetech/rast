@@ -2,6 +2,7 @@
 
 - 0.17.0 - Allow default outcome for unmatched scenarios.
 - 0.16.0 - Allow isolation of scenarios via include clause.
+- 0.15.4 - Fix bug on logic checker for not operation.
 - 0.15.3 - Fix use of boolean as key to the config.
          - Fix allow factory to be called inside both execute and prepare block.
 - 0.15.2 - Fix handling of nil token, and big integers.

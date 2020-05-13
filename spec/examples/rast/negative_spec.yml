@@ -1,0 +1,5 @@
+---
+specs:
+  '#positive?':
+    variables: {number: [-1, 0, 1]}
+    outcomes: {false: '!1'}

@@ -42,20 +42,12 @@ class RuleValidator
     matched_outputs.first || spec.default_outcome
   end
 
+  #
   def binary_outcome(outcome: '', spec: nil, expected: false)
-    is_positive = spec.pair.keys.include?(outcome)
-    if is_positive
-      expected == 'true' ? outcome : opposite(outcome: outcome, spec: spec)
+    if expected == 'true'
+      outcome
     else
-      expected == 'true' ? opposite(outcome: outcome, spec: spec) : outcome
-    end
-  end
-
-  def opposite(outcome: '', spec: nil)
-    if spec.pair.keys.include? outcome
       spec.pair[outcome]
-    else
-      spec.pair_reversed[outcome]
     end
   end
 end

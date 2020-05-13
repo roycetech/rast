@@ -4,28 +4,24 @@
 #
 # @author Royce Remulla
 #
-class LogicChecker
+class Lohika
   # Perform logical AND operation on two arguments.
   #
   # @param argument1 first argument of Boolean type.
   # @param argument2 second argument of Boolean type.
-  def and(argument1, argument2)
-    argument1 && argument2
+  def at(argument1, argument2)
+    return :oo if argument1 == 'oo' && argument2 == 'oo'
+
+    :hindi
   end
 
   # Perform logical OR operation on two arguments.
   #
   # @param argument1 first argument of Boolean type.
   # @param argument2 second argument of Boolean type.
-  def or(argument1, argument2)
-    argument1 || argument2
-  end
+  def o(argument1, argument2)
+    return :oo if argument1 == 'oo' || argument2 == 'oo'
 
-  # Perform logical XOR operation on two arguments.
-  #
-  # @param argument1 first argument of Boolean type.
-  # @param argument2 second argument of Boolean type.
-  def xor(argument1, argument2)
-    argument1 && !argument2 || !argument1 && argument2
+    :hindi
   end
 end

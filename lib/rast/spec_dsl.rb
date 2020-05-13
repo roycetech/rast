@@ -29,23 +29,6 @@ class SpecDSL
     instance_eval(&block)
   end
 
-  def respond_to_missing?(*several_variants)
-    super(several_variants)
-  end
-
-  def method_missing(method_name_symbol, *args, &block)
-    # p "method_missing: #{method_name_symbol}"
-    return super if method_name_symbol == :to_ary
-
-    @rspec_methods << {
-      name: method_name_symbol,
-      args: args.first,
-      block: block
-    }
-
-    self
-  end
-
   # yaml-less start
   def variables(vars)
     @variables = vars
@@ -53,10 +36,6 @@ class SpecDSL
 
   def exclude(clause)
     @exclude = clause
-  end
-
-  def converters(&block)
-    @converters = instance_eval(&block)
   end
 
   def rules(rules)
@@ -105,8 +84,15 @@ class SpecDSL
     end
 
     @fixtures.sort_by! do |fixture|
+
+      if fixture[:expected_outcome].nil?
+        raise 'Broken initialization, check your single rule/else configuration'
+      end
+
       fixture[:expected_outcome] + fixture[:scenario].to_s
     end
+
+    # @fixtures.reverse!
 
     generate_rspecs
   end

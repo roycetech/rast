@@ -112,17 +112,12 @@ class RuleEvaluator
     if TRUE != value && FALSE != value
       subscript = extract_subscript(token: value.to_s)
       value_str = value.to_s.strip
-      if subscript > -1
-        converter = @converters[subscript]
-        value = converter.convert(value_str[/^.+(?=\[)/])
-      else
-        value = if rule_token_convert.nil? ||
-                   rule_token_convert[value_str].nil?
-                  default_converter.convert(value_str)
-                else
-                  rule_token_convert[value_str].convert(value_str)
-                end
-      end
+      value = if subscript > -1
+                converter = @converters[subscript]
+                converter.convert(value_str[/^.+(?=\[)/])
+              else
+                rule_token_convert[value_str].convert(value_str)
+              end
     end
     retval << subscript
     retval << value
@@ -161,6 +156,8 @@ class RuleEvaluator
   #  * @param string token to check for subscript.
   #  */
   def extract_subscript(token: '')
+    return -1 if token.is_a? Array
+
     subscript = token[/\[(\d+)\]$/, 1]
     subscript.nil? ? -1 : subscript.to_i
   end
@@ -177,9 +174,6 @@ class RuleEvaluator
     stack_rpn_clone = Marshal.load(Marshal.dump(@stack_rpn))
 
     # /* evaluating the RPN expression */
-
-    # binding.pry
-
     while stack_rpn_clone.any?
       token = stack_rpn_clone.pop
       if operator?(token: token)
@@ -233,10 +227,10 @@ class RuleEvaluator
       right: right_arr[1]
     )
 
-    @stack_answer << if answer[0] == '|'
+    @stack_answer << if answer[0] == '*'
                        answer
                      else
-                       "|#{answer}"
+                       "*#{answer}"
                      end
   end
 
@@ -246,27 +240,26 @@ class RuleEvaluator
   def evaluate_multi_not(scenario: [])
     left = @stack_answer.pop.strip
 
-    # binding.pry
-
     answer = if LogicHelper::TRUE == left
                LogicHelper::FALSE
              elsif LogicHelper::FALSE == left
                LogicHelper::TRUE
              else
                subscript = extract_subscript(token: left)
+               converter = DEFAULT_CONVERT_HASH[scenario.first.class]
                if subscript < 0
-                 (!scenario.include?(left)).to_s
+                 converted = converter.convert(left)
+                 (!scenario.include?(converted)).to_s
                else
-                 default_converter = DEFAULT_CONVERT_HASH[scenario.first.class]
-                 converted = default_converter.convert(left[RE_TOKEN_BODY])
-                 (scenario[subscript] == converted).to_s
+                 converted = converter.convert(left[RE_TOKEN_BODY])
+                 (scenario[subscript] != converted).to_s
                end
              end
 
-    @stack_answer << if answer[0] == '|'
+    @stack_answer << if answer[0] == '*'
                        answer
                      else
-                       "|#{answer}"
+                       "*#{answer}"
                      end
   end
 

@@ -8,15 +8,15 @@ module LogicHelper
   #  * @author Royce
   #  */
 
-  TRUE = '|true'
-  FALSE = '|false'
+  TRUE = '*true'
+  FALSE = '*false'
 
   # /**
   #  * @param scenario list of scenario tokens.
   #  * @param left_subscript left index.
   #  * @param right_subscript right index.
-  #  * @param left left token.
-  #  * @param right right token.
+  #  * @param left left token, no subscript.
+  #  * @param right right token, no subscript.
   #  */
   def perform_logical_and(scenario: [], left_subscript: -1, right_subscript: -1,
                           left: nil, right: nil)

@@ -6,8 +6,6 @@ require 'rast/rules/rule'
 require 'rast/rules/rule_evaluator'
 require 'rast/rules/rule_validator'
 
-require 'rast/converters/default_converter'
-
 # Generates the test parameters.
 class ParameterGenerator
   # Allow access so yaml-less can build the config via dsl.
@@ -148,14 +146,14 @@ class ParameterGenerator
                        default_converter
                      end
                    end
-                 elsif converters_config.first.class == String
-                   # when converters defined, determined by the converter name as String.
-                   spec_config['converters'].map do |converter|
-                     Object.const_get(converter).new
-                   end
-                 else
-                   # converters defined, probably programmatically when yaml-less, just return it.
-                   converters_config
+                 # elsif converters_config.first.class == String
+                 #   # when converters defined, determined by the converter name as String.
+                 #   spec_config['converters'].map do |converter|
+                 #     Object.const_get(converter).new
+                 #   end
+                 # else
+                 #   # converters defined, probably programmatically when yaml-less, just return it.
+                 #   converters_config
                  end
 
     spec.init_converters(converters: converters)

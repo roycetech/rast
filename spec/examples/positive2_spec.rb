@@ -8,7 +8,7 @@ rast Positive2 do
     execute do |number|
       begin
         subject.positive?(number)
-      rescue StandardError
+      rescue RuntimeError
         :ERROR
       end
     end

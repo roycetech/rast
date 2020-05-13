@@ -49,19 +49,4 @@ class RastSpec
     @exclude_clause = exclude_clause
     self
   end
-
-  def init_inclusion(include_clause)
-    @include_clause = include_clause
-    self
-  end
-
-  def to_s
-    "Class: #{self.class}
-Description: #{@description}
-Variables: #{@variables}
-Rules: #{@rules}
-Pair: #{@pair}
-Converters: #{@converters}
-    "
-  end
 end
