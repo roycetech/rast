@@ -5,14 +5,12 @@ specs:
 
     variables:
       param1:
-        - false
-        - true
+        - one
+        - two
 
-    converters:
-      - BoolConverter
+    outcomes:  # required (dictionary)
+      true: true[0]
 
-    rules:
-      'true': 'true[0]'
+    pair: {true: one}  # optional. (dictionary with 1 mapping)
 
-    pair:
-      'true': 'false'
+    default: DEFAULT  # optional (scalar) fall off value, or the else result of the `pair` config.

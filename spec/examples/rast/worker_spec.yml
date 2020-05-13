@@ -13,4 +13,4 @@ specs:
         - Saturday
 
     outcomes: {Rest: Holiday | Sunday}
-    else: Work
+    default: Work

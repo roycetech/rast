@@ -24,7 +24,11 @@ class ParameterGenerator
     spec_config = @specs_config[spec_id]
 
     spec_config[:description] = spec_id
+
+    # Keep, for backwards compatibility
     spec_config['rules'] ||= spec_config['outcomes']
+    spec_config['default'] ||= spec_config['else']
+
     spec = instantiate_spec(spec_config)
 
     list = []
@@ -118,7 +122,8 @@ class ParameterGenerator
     spec = RastSpec.new(
       description: spec_config[:description],
       variables: spec_config['variables'],
-      rule: Rule.new(rules: spec_config['rules'])
+      rule: Rule.new(rules: spec_config['rules']),
+      default_outcome: spec_config['default'] || spec_config['else']
     )
 
     pair_config = calculate_pair(spec_config)
@@ -170,7 +175,7 @@ class ParameterGenerator
         return { outcomes.first => outcomes.first == 'true' ? 'false' : 'true' }
       end
 
-      return { outcomes.first => spec_config['else'] } if spec_config['else']
+      return { outcomes.first => spec_config['default'] } if spec_config['default']
     end
 
     {}

@@ -11,7 +11,7 @@ class SpecDSL
                 :prepare_block, :transients, :outcomes, :fixtures
 
   # # yaml-less
-  attr_writer :variables, :exclude, :converters, :rules, :pair
+  attr_writer :variables, :exclude, :include, :converters, :rules, :pair, :default_outcome
 
   # @subject the sut instance
   # @name the sut name to be displayed with -fd
@@ -75,6 +75,10 @@ class SpecDSL
 
   def pair(pair)
     @pair = pair
+  end
+
+  def default_outcome(outcome)
+    @default_outcome = outcome
   end
 
   # yaml-less end

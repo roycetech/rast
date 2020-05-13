@@ -26,8 +26,6 @@ class RuleValidator
   private
 
   def validate_multi(scenario: [], spec: nil, rule_result: [])
-    # binding.pry
-
     matched_outputs = []
     match_count = 0
 
@@ -37,10 +35,11 @@ class RuleValidator
       match_count += 1
       matched_outputs << spec.rule.outcomes[i]
     end
-    Rast.assert("Scenario must fall into a unique rule output/clause:
-     #{scenario} , matched: #{matched_outputs}") { match_count == 1 }
 
-    matched_outputs.first
+    Rast.assert("Scenario must fall into a unique rule outcome/clause:
+     #{scenario} , matched: #{matched_outputs}") { match_count == 1  } if spec.default_outcome.nil?
+
+    matched_outputs.first || spec.default_outcome
   end
 
   def binary_outcome(outcome: '', spec: nil, expected: false)
