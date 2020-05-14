@@ -16,9 +16,15 @@ rast LogicHelper do
     end
   end
 
-  # spec '#perform_logical_or' do
-  #   execute do |scenario, left_subscript, left, right_subscript, right|
-  #     subject.perform_logical_or
-  #   end
-  # end
+  spec '#perform_logical_or' do
+    execute do |scenario, left_subscript, left, right_subscript, right|
+      subject.perform_logical_or(
+        scenario: scenario,
+        left_subscript: left_subscript,
+        left: left,
+        right_subscript: right_subscript,
+        right: right
+      )
+    end
+  end
 end

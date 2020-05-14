@@ -49,4 +49,9 @@ class RastSpec
     @exclude_clause = exclude_clause
     self
   end
+
+  def init_inclusion(include_clause)
+    @include_clause = include_clause
+    self
+  end
 end

@@ -21,7 +21,7 @@ class RuleEvaluator
 
   # the "false" part of the "false[1]"
   RE_TOKEN_BODY = /^.+(?=\[)/.freeze
-  RE_TOKENS = /([!|)(&])|([a-zA-Z\s0-9-]+\[\d\])/.freeze
+  RE_TOKENS = /([!|)(&])|([*a-zA-Z\s0-9-]+\[\d\])/.freeze
 
   def self.operator_from_symbol(symbol: nil)
     OPERATORS.find { |operator| operator.symbol == symbol }
@@ -85,10 +85,7 @@ class RuleEvaluator
   #  * @return <code>String</code> representation of the result
   #  */
   def evaluate(scenario: [], rule_token_convert: {})
-    # /* check if is there something to evaluate */
-    if @stack_rpn.empty?
-      true
-    elsif @stack_rpn.size == 1
+    if @stack_rpn.size == 1
       evaluate_one_rpn(scenario: scenario).to_s
     else
       evaluate_multi_rpn(
@@ -113,12 +110,13 @@ class RuleEvaluator
       subscript = extract_subscript(token: value.to_s)
       value_str = value.to_s.strip
       value = if subscript > -1
-                converter = @converters[subscript]
-                converter.convert(value_str[/^.+(?=\[)/])
+                value_token = value_str[/^.+(?=\[)/]
+                rule_token_convert[value_token].convert(value_token)
               else
                 rule_token_convert[value_str].convert(value_str)
               end
     end
+
     retval << subscript
     retval << value
     retval
@@ -238,20 +236,20 @@ class RuleEvaluator
   #  * @param scenario List of values to evaluate against the rule expression.
   #  */
   def evaluate_multi_not(scenario: [])
-    left = @stack_answer.pop.strip
+    latest = @stack_answer.pop.strip
 
-    answer = if LogicHelper::TRUE == left
+    answer = if LogicHelper::TRUE == latest
                LogicHelper::FALSE
-             elsif LogicHelper::FALSE == left
+             elsif LogicHelper::FALSE == latest
                LogicHelper::TRUE
              else
-               subscript = extract_subscript(token: left)
+               subscript = extract_subscript(token: latest)
                converter = DEFAULT_CONVERT_HASH[scenario.first.class]
                if subscript < 0
-                 converted = converter.convert(left)
+                 converted = converter.convert(latest)
                  (!scenario.include?(converted)).to_s
                else
-                 converted = converter.convert(left[RE_TOKEN_BODY])
+                 converted = converter.convert(latest[RE_TOKEN_BODY])
                  (scenario[subscript] != converted).to_s
                end
              end

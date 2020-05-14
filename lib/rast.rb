@@ -34,6 +34,10 @@ class Rast
     raise message unless yield
   end
 
+  def xspec(id, &block)
+    p "xspec skipped #{id}"
+  end
+
   def spec(id, &block)
     global_spec(
       subject: @subject,

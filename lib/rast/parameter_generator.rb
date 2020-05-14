@@ -49,18 +49,21 @@ class ParameterGenerator
 
     rule_evaluator = RuleEvaluator.new(converters: spec.converters)
 
-    exclude_result = true
+    include_result = true
     unless spec.exclude_clause.nil?
       exclude_clause = Rule.sanitize(clause: spec.exclude_clause)
       rule_evaluator.parse(expression: exclude_clause)
-      exclude_result = rule_evaluator.evaluate(scenario: scenario, rule_token_convert: spec.token_converter) == "false"
+      evaluate_result = rule_evaluator.evaluate(scenario: scenario, rule_token_convert: spec.token_converter)
+      include_result = evaluate_result == 'false'
     end
 
-    return exclude_result if spec.include_clause.nil?
+    return include_result if spec.include_clause.nil? || !include_result
 
     include_clause = Rule.sanitize(clause: spec.include_clause)
     rule_evaluator.parse(expression: include_clause)
-    rule_evaluator.evaluate(scenario: scenario, rule_token_convert: spec.token_converter) == "true"
+    include_result = rule_evaluator.evaluate(scenario: scenario, rule_token_convert: spec.token_converter) == "true"
+
+    include_result
   end
 
   # add all fixtures to the list.
@@ -68,7 +71,10 @@ class ParameterGenerator
     validator = RuleValidator.new
 
     scenarios.each do |scenario|
-      next unless valid_case?(scenario, spec)
+      good = valid_case?(scenario, spec)
+      # p "#{good} #{scenario}"
+
+      next unless good
 
       list << build_param(validator, scenario, spec)
     end
@@ -146,14 +152,6 @@ class ParameterGenerator
                        default_converter
                      end
                    end
-                 # elsif converters_config.first.class == String
-                 #   # when converters defined, determined by the converter name as String.
-                 #   spec_config['converters'].map do |converter|
-                 #     Object.const_get(converter).new
-                 #   end
-                 # else
-                 #   # converters defined, probably programmatically when yaml-less, just return it.
-                 #   converters_config
                  end
 
     spec.init_converters(converters: converters)

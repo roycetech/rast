@@ -8,7 +8,7 @@ class SpecDSL
   include FactoryGirl::Syntax::Methods
 
   attr_accessor :subject, :rspec_methods, :execute_block,
-                :prepare_block, :transients, :outcomes, :fixtures
+                :prepare_block, :transients, :outcomes, :fixtures, :spec_id
 
   # # yaml-less
   attr_writer :variables, :exclude, :include, :converters, :rules, :pair, :default_outcome
@@ -52,14 +52,6 @@ class SpecDSL
     rules(outcomes)
   end
 
-  def pair(pair)
-    @pair = pair
-  end
-
-  def default_outcome(outcome)
-    @default_outcome = outcome
-  end
-
   # yaml-less end
 
   def prepare(&block)
@@ -86,10 +78,11 @@ class SpecDSL
     @fixtures.sort_by! do |fixture|
 
       if fixture[:expected_outcome].nil?
-        raise 'Broken initialization, check your single rule/else configuration'
+        raise 'Broken initialization, check your single rule/else/default configuration'
       end
 
       fixture[:expected_outcome] + fixture[:scenario].to_s
+      # fixture[:scenario].to_s + fixture[:expected_outcome]
     end
 
     # @fixtures.reverse!
@@ -105,8 +98,10 @@ class SpecDSL
     title = "#{@subject_name}: #{@fixtures.first[:spec].description}"
 
     exclusion = fixtures.first[:spec].exclude_clause
+    exclusion = exclusion.join if exclusion.is_a? Array
     title += ", EXCLUDE: '#{exclusion}'" if exclusion
     inclusion = fixtures.first[:spec].include_clause
+    inclusion = inclusion.join if inclusion.is_a? Array
     title += ", ONLY: '#{inclusion}'" if inclusion
 
     RSpec.describe title do

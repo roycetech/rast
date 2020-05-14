@@ -36,8 +36,9 @@ class RuleValidator
       matched_outputs << spec.rule.outcomes[i]
     end
 
-    Rast.assert("Scenario must fall into a unique rule outcome/clause:
-     #{scenario} , matched: #{matched_outputs}") { match_count == 1  } if spec.default_outcome.nil?
+    Rast.assert("#{spec.description} #{scenario} must fall into a unique rule outcome/clause, matched: #{matched_outputs}") do
+      match_count == 1 || match_count == 0 && !spec.default_outcome.nil?
+    end
 
     matched_outputs.first || spec.default_outcome
   end

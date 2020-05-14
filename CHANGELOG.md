@@ -1,5 +1,11 @@
 # Change log
 
+- 0.18.0 - [feature] xspec to skip a test
+         - [feature] Added include rule to isolate scenarios.
+         - [feature] Asterisk can be used as token character.
+         - [bug] Duplicate outcome wasn't detected when there's default config.
+         - [enhancement] Early return for 'and' and 'or' operators.
+
 - 0.17.0 - Allow default outcome for unmatched scenarios.
 - 0.16.0 - Allow isolation of scenarios via include clause.
 - 0.15.4 - Fix bug on logic checker for not operation.
