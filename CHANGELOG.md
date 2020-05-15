@@ -1,5 +1,13 @@
 # Change log
 
+## Unreleased
+
+- Add travis-ci build.
+- Add RubyGems badge
+- Update documentation.
+
+## Released
+
 - 0.18.0 - [feature] xspec to skip a test
          - [feature] Added include rule to isolate scenarios.
          - [feature] Asterisk can be used as token character.
