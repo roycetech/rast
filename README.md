@@ -3,6 +3,7 @@
 RSpec All Scenario Testing
 
 [![Gem Version](https://badge.fury.io/rb/rast.svg)](https://badge.fury.io/rb/rast)
+[![Build Status](https://travis-ci.com/roycetech/rast.svg?branch=master)](https://travis-ci.com/roycetech/rast)
 
 This library runs on top of RSpec to provide basically a parameterized unit testing pattern. It follows a specific pattern of writing unit tests, enabling a predictable, complete and outputs a result that is simple to analyze.
 
@@ -32,7 +33,7 @@ DSL. The DSL will then invoke the parameter generator to generate the scenarios.
 
 ## Releasing GEM
 
-Build gem with `gem build rast.gemspec`  
+Build gem with `gem build rast.gemspec`
 Publish with `gem push <gem-filename>`
 
 
