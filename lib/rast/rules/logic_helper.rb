@@ -18,41 +18,26 @@ module LogicHelper
   #  * @param left left token, no subscript.
   #  * @param right right token, no subscript.
   #  */
-  def perform_logical_and(scenario: [], left_subscript: -1, right_subscript: -1,
-                          left: nil, right: nil)
-    if FALSE == left && left_subscript == -1 || FALSE == right && right_subscript == -1
-      FALSE
-    elsif TRUE == left && left_subscript == -1 && TRUE == right && right_subscript == -1
-      TRUE
-    elsif TRUE == left && left_subscript == -1
-      if right_subscript < 0
-        scenario.include?(right).to_s
-      else
-        (scenario[right_subscript] == right).to_s
-      end
-    elsif TRUE == right && right_subscript == -1
-      if left_subscript < 0
-        scenario.include?(left).to_s
-      else
-        (scenario[left_subscript] == left).to_s
-      end
-    else
-      left_eval = pevaluate(
-        scenario: scenario,
-        subscript: left_subscript,
-        object: left
-      )
+  def perform_logical_and(
+    scenario: [],
+    left_subscript: -1,
+    right_subscript: -1,
+    left: nil,
+    right: nil
+  )
 
-      return 'false' unless left_eval
+    evaluated = both_internal_and?(left, left_subscript, right, right_subscript)
+    return evaluated if evaluated
 
-      right_eval = pevaluate(
-        scenario: scenario,
-        subscript: right_subscript,
-        object: right
-      )
-
-      (left_eval && right_eval).to_s
+    if internal_match?(TRUE, left, left_subscript)
+      return present?(scenario, right, right_subscript).to_s
     end
+
+    if internal_match?(TRUE, right, right_subscript)
+      return present?(scenario, left, left_subscript).to_s
+    end
+
+    evaluate_and(scenario, left, left_subscript, right, right_subscript).to_s
   end
 
   # /**
@@ -64,54 +49,18 @@ module LogicHelper
   #  */
   def perform_logical_or(scenario: [], left_subscript: -1, right_subscript: -1,
                          left: nil, right: nil)
-    if TRUE == left && left_subscript == -1 || TRUE == right && right_subscript == -1
-      TRUE
-    elsif FALSE == left && left_subscript == -1 && FALSE == right && right_subscript == -1
-      FALSE
-    elsif FALSE == left && left_subscript == -1
-      if right_subscript < 0
-        scenario.include?(right).to_s
-      else
-        (scenario[right_subscript] == right).to_s
-      end
-    elsif FALSE == right && right_subscript == -1
-      if left_subscript < 0
-        scenario.include?(left).to_s
-      else
-        (scenario[left_subscript] == left).to_s
-      end
-    else
-      left_eval = pevaluate(
-        scenario: scenario,
-        subscript: left_subscript,
-        object: left
-      )
+    evaluated = both_internal_or?(left, left_subscript, right, right_subscript)
+    return evaluated if evaluated
 
-      return 'true' if left_eval
-
-      right_eval = pevaluate(
-        scenario: scenario,
-        subscript: right_subscript,
-        object: right
-      )
-
-      (left_eval || right_eval).to_s
+    if internal_match?(FALSE, left, left_subscript)
+      return present?(scenario, right, right_subscript).to_s
     end
-  end
 
-  # /**
-  #  * Helper method to evaluate left or right token.
-  #  *
-  #  * @param scenario list of scenario tokens.
-  #  * @param subscript scenario token subscript.
-  #  * @param object left or right token.
-  #  */
-  def pevaluate(scenario: [], subscript: -1, object: nil)
-    if subscript < 0
-      scenario.include?(object)
-    else
-      scenario[subscript] == object
+    if internal_match?(FALSE, right, right_subscript)
+      return present?(scenario, left, left_subscript).to_s
     end
+
+    evaluate_or(scenario, left, left_subscript, right, right_subscript).to_s
   end
 
   # /**
@@ -132,5 +81,72 @@ module LogicHelper
   #  */
   def close_bracket?(token: '')
     token == ')'
+  end
+
+  private
+
+  def both_internal_and?(left, left_subscript, right, right_subscript)
+    if internal_match?(FALSE, left, left_subscript) ||
+       internal_match?(FALSE, right, right_subscript)
+
+      return FALSE
+    end
+
+    if internal_match?(TRUE, left, left_subscript) &&
+       internal_match?(TRUE, right, right_subscript)
+
+      TRUE
+    end
+  end
+
+  def both_internal_or?(left, left_subscript, right, right_subscript)
+    if internal_match?(TRUE, left, left_subscript) ||
+       internal_match?(TRUE, right, right_subscript)
+
+      return TRUE
+    end
+
+    if internal_match?(FALSE, left, left_subscript) &&
+       internal_match?(FALSE, right, right_subscript)
+
+      FALSE
+    end
+  end
+
+  def evaluate_and(scenario, left, left_subscript, right, right_subscript)
+    left_eval = present?(scenario, left, left_subscript)
+
+    return false unless left_eval
+
+    right_eval = present?(scenario, right, right_subscript)
+    left_eval && right_eval
+  end
+
+  def evaluate_or(scenario, left, left_subscript, right, right_subscript)
+    left_eval = present?(scenario, left, left_subscript)
+
+    return true if left_eval
+
+    right_eval = present?(scenario, right, right_subscript)
+    left_eval || right_eval
+  end
+
+  # /**
+  #  * Helper method to evaluate left or right token.
+  #  *
+  #  * @param scenario list of scenario tokens.
+  #  * @param subscript scenario token subscript.
+  #  * @param object left or right token.
+  #  */
+  def present?(scenario, value, subscript)
+    if subscript < 0
+      scenario.include?(value)
+    else
+      scenario[subscript] == value
+    end
+  end
+
+  def internal_match?(internal, value, subscript)
+    value == internal && subscript == -1
   end
 end
