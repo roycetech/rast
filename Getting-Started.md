@@ -1,4 +1,4 @@
-# Getting Started
+# Getting Started (WIP)
 
 
 
@@ -20,7 +20,7 @@ Start by creating a spec file inside your `spec` folder, let's call it `positive
 
 `positive_spec.rb` would look like this:
 
-```
+```ruby
 require 'rast'
 
 rast Positive do
@@ -32,20 +32,20 @@ end
 
 - On line: 1, the library is required:
 
-```
+```ruby
 require 'rast'
 ```
 
 - On line: 3, invoke the DSL:
 
-```
+```ruby
 rast Positive do
 ```
 `Positive` is the fully qualified name of the class or the module to be tested.
 
 - On line: 4, define the first spec:
 
-```
+```ruby
   spec 'Is Positive Example' do
 ```
 
@@ -53,7 +53,7 @@ rast Positive do
 
 - On line: 5, define the `execute` block..
 
-```
+```ruby
 execute { |number| subject.positive?(number) }
 ```
 
@@ -78,7 +78,7 @@ Create a yaml file with the same name as the spec, but with `.yml` extension.
 
 `spec/rast/positive_spec.yml` would contain:
 
-```
+```yaml
 specs:
   Is Positive Exaple:
     variables: {number: [-1, 0, 1]}
@@ -95,7 +95,7 @@ which has 3 different possibilities `-1`, `0`, and `1`.
 
 positive.rb will have:
 
-```
+```ruby
 class Positive
   def positive?(number)
     number > 0
@@ -109,7 +109,7 @@ end
 
 In cases where multiple variables, `left` and `right`, has the same set of tokens `false` and `true`:
 
-```
+```yaml
     variables:
       left: [false, true]
       right: [false, true]
@@ -118,7 +118,7 @@ In cases where multiple variables, `left` and `right`, has the same set of token
 We need a way to uniquely identify the tokens in the `outcomes` configuration. We can do so by using a subscript in the format: `token[n]`
 For Example:
 
-```
+```yaml
 outcomes: {true: 'true[0] & true[1]'}
 ```
 
@@ -129,11 +129,3 @@ token in the `right` variable.
 ## References
 
 ### Outcomes
-
-
-## Current Limitations.
-
-
-
-
-
