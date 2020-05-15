@@ -3,6 +3,6 @@
 # Converts string into number
 class StrConverter
   def convert(string)
-    string
+    string unless string == 'nil'
   end
 end

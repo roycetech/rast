@@ -2,9 +2,7 @@
 specs:
   '#goto_work?':
     variables:
-      Day Type:
-        - Holiday
-        - Regular Day
+      Day Type: [Holiday, Regular Day]
       Day of Week:
         - Sunday
         - Monday
@@ -14,8 +12,5 @@ specs:
         - Friday
         - Saturday
 
-    rules:
-      Rest: Holiday|Sunday
-
-    pair:
-      Rest: Work
+    outcomes: {Rest: Holiday | Sunday}
+    default: Work

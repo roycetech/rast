@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
-require_relative 'operator'
-require_relative 'logic_helper'
+require 'rast/rules/operator'
+require 'rast/rules/logic_helper'
 require 'rast/converters/int_converter'
+require 'rast/converters/float_converter'
+require 'rast/converters/default_converter'
 require 'rast/converters/bool_converter'
 require 'rast/converters/str_converter'
 
@@ -19,7 +21,7 @@ class RuleEvaluator
 
   # the "false" part of the "false[1]"
   RE_TOKEN_BODY = /^.+(?=\[)/.freeze
-  RE_TOKENS = /([!|)(&])|([a-zA-Z\s0-9]+\[\d\])/.freeze
+  RE_TOKENS = /([!|)(&])|([*a-zA-Z\s0-9-]+\[\d\])/.freeze
 
   def self.operator_from_symbol(symbol: nil)
     OPERATORS.find { |operator| operator.symbol == symbol }
@@ -27,6 +29,9 @@ class RuleEvaluator
 
   DEFAULT_CONVERT_HASH = {
     Integer => IntConverter.new,
+    Float => FloatConverter.new,
+    Fixnum => IntConverter.new,
+    Array => DefaultConverter.new,
     TrueClass => BoolConverter.new,
     FalseClass => BoolConverter.new,
     String => StrConverter.new
@@ -53,14 +58,23 @@ class RuleEvaluator
     @stack_operations.clear
     @stack_rpn.clear
 
-    # /* splitting input string into tokens */
-    tokens = expression.split(RE_TOKENS).reject(&:empty?)
+    tokens = if expression.is_a?(Array)
+               expression
+             else
+               RuleEvaluator.tokenize(clause: expression)
+             end
 
     # /* loop for handling each token - shunting-yard algorithm */
-    tokens.each { |token| shunt_internal(token: token.strip) }
+    tokens.each { |token| shunt_internal(token: token) }
 
     @stack_rpn << @stack_operations.pop while @stack_operations.any?
     @stack_rpn.reverse!
+  end
+
+  # splitting input string into tokens
+  # @ clause - rule clause to be tokenized
+  def self.tokenize(clause: '')
+    clause.to_s.split(RE_TOKENS).reject(&:empty?)
   end
 
   # /**
@@ -71,11 +85,8 @@ class RuleEvaluator
   #  * @return <code>String</code> representation of the result
   #  */
   def evaluate(scenario: [], rule_token_convert: {})
-    # /* check if is there something to evaluate */
-    if @stack_rpn.empty?
-      true
-    elsif @stack_rpn.size == 1
-      evaluate_one_rpn(scenario: scenario)
+    if @stack_rpn.size == 1
+      evaluate_one_rpn(scenario: scenario).to_s
     else
       evaluate_multi_rpn(
         scenario: scenario,
@@ -91,22 +102,21 @@ class RuleEvaluator
   def next_value(rule_token_convert: {}, default_converter: nil)
     subscript = -1
     retval = []
-    value = @stack_answer.pop&.strip
+    value = @stack_answer.pop
+
+    return [-1, value] if value.is_a? Array
+
     if TRUE != value && FALSE != value
       subscript = extract_subscript(token: value.to_s)
       value_str = value.to_s.strip
-      if subscript > -1
-        converter = @converters[subscript]
-        value = converter.convert(value_str[/^.+(?=\[)/])
-      else
-        value = if rule_token_convert.nil? ||
-                   rule_token_convert[value_str].nil?
-                  default_converter.convert(value_str)
-                else
-                  rule_token_convert[value_str].convert(value_str)
-                end
-      end
+      value = if subscript > -1
+                value_token = value_str[/^.+(?=\[)/]
+                rule_token_convert[value_token].convert(value_token)
+              else
+                rule_token_convert[value_str].convert(value_str)
+              end
     end
+
     retval << subscript
     retval << value
     retval
@@ -144,6 +154,8 @@ class RuleEvaluator
   #  * @param string token to check for subscript.
   #  */
   def extract_subscript(token: '')
+    return -1 if token.is_a? Array
+
     subscript = token[/\[(\d+)\]$/, 1]
     subscript.nil? ? -1 : subscript.to_i
   end
@@ -160,11 +172,8 @@ class RuleEvaluator
     stack_rpn_clone = Marshal.load(Marshal.dump(@stack_rpn))
 
     # /* evaluating the RPN expression */
-
-    # binding.pry
-
     while stack_rpn_clone.any?
-      token = stack_rpn_clone.pop.strip
+      token = stack_rpn_clone.pop
       if operator?(token: token)
         if NOT.symbol == token
           evaluate_multi_not(scenario: scenario)
@@ -182,7 +191,8 @@ class RuleEvaluator
 
     raise 'Some operator is missing' if @stack_answer.size > 1
 
-    @stack_answer.pop[1..]
+    last = @stack_answer.pop
+    last[1..last.size]
   end
 
   # /**
@@ -193,7 +203,8 @@ class RuleEvaluator
   def evaluate_multi(scenario: [], rule_token_convert: {}, operator: nil)
     default_converter = DEFAULT_CONVERT_HASH[scenario.first.class]
 
-    # binding.pry
+    # Convert 'nil' to nil.
+    formatted_scenario = scenario.map { |token| token == 'nil' ? nil: token }
 
     left_arr = next_value(
       rule_token_convert: rule_token_convert,
@@ -207,17 +218,17 @@ class RuleEvaluator
 
     answer = send(
       "perform_logical_#{operator.name}",
-      scenario: scenario,
+      scenario: formatted_scenario,
       left_subscript: left_arr[0],
       right_subscript: right_arr[0],
       left: left_arr[1],
       right: right_arr[1]
     )
 
-    @stack_answer << if answer[0] == '|'
+    @stack_answer << if answer[0] == '*'
                        answer
                      else
-                       "|#{answer}"
+                       "*#{answer}"
                      end
   end
 
@@ -225,29 +236,28 @@ class RuleEvaluator
   #  * @param scenario List of values to evaluate against the rule expression.
   #  */
   def evaluate_multi_not(scenario: [])
-    left = @stack_answer.pop.strip
+    latest = @stack_answer.pop.strip
 
-    # binding.pry
-
-    answer = if LogicHelper::TRUE == left
+    answer = if LogicHelper::TRUE == latest
                LogicHelper::FALSE
-             elsif LogicHelper::FALSE == left
+             elsif LogicHelper::FALSE == latest
                LogicHelper::TRUE
              else
-               subscript = extract_subscript(token: left)
-               if subscript.negative?
-                 (!scenario.include?(left)).to_s
+               subscript = extract_subscript(token: latest)
+               converter = DEFAULT_CONVERT_HASH[scenario.first.class]
+               if subscript < 0
+                 converted = converter.convert(latest)
+                 (!scenario.include?(converted)).to_s
                else
-                 default_converter = DEFAULT_CONVERT_HASH[scenario.first.class]
-                 converted = default_converter.convert(left[RE_TOKEN_BODY])
-                 (scenario[subscript] == converted).to_s
+                 converted = converter.convert(latest[RE_TOKEN_BODY])
+                 (scenario[subscript] != converted).to_s
                end
              end
 
-    @stack_answer << if answer[0] == '|'
+    @stack_answer << if answer[0] == '*'
                        answer
                      else
-                       "|#{answer}"
+                       "*#{answer}"
                      end
   end
 
@@ -255,11 +265,11 @@ class RuleEvaluator
   def evaluate_one_rpn(scenario: [])
     single = @stack_rpn.last
     subscript = extract_subscript(token: single)
+    default_converter = DEFAULT_CONVERT_HASH[scenario.first.class]
     if subscript > -1
-      default_converter = DEFAULT_CONVERT_HASH[scenario.first.class]
       scenario[subscript] == default_converter.convert(single[RE_TOKEN_BODY])
     else
-      scenario.include? single
+      scenario.include?(default_converter.convert(single))
     end
   end
 

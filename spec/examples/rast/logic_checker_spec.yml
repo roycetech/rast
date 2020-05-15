@@ -2,38 +2,63 @@
 specs:
   Logical AND:
     variables:
-      left:
-        - false
-        - true
-      right:
-        - false
-        - true
+      left: [false, true]
+      right: [false, true]
 
-    converters:
-      - BoolConverter
-      - BoolConverter
+    exclude: false[0] & true[1]
+    outcomes: {true: 'true[0] & true[1]'}
 
-    rules:
-      true: 'true[0]&true[1]'
+  Logical AND2:
+    variables:
+      left: [false, true]
+      right: [false, true]
+    outcomes: {true: '!false[0] & !false[1]'}
 
-    pair:
-      true: false
+  Logical AND3:
+    variables:
+      left: [false, true]
+      right: [false, true]
+    outcomes: {false: 'false[0] | false[1]'}
 
   Logical OR:
     variables:
-      left:
-        - false
-        - true
-      right:
-        - false
-        - true
+      left: [false, true]
+      right: [false, true]
+    outcomes: {true: 'true[0] | true[1]'}
 
-    converters:
-      - BoolConverter
-      - BoolConverter
+  Logical OR2:
+    variables:
+      left: [false, true]
+      right: [false, true]
+    include: true[0]
+    outcomes: {true: '!false[0] | !false[1]'}
 
-    rules:
-      true: 'true[0]|true[1]'
+  Logical OR3:
+    variables:
+      left: [false, true]
+      right: [false, true]
+    outcomes: {false: '!true[0] & !true[1]'}
 
-    pair:
-      true: false
+  Logical XOR:
+    variables:
+      left: [false, true]
+      right: [false, true]
+    outcomes: {true: 'false[0] & true[1] | true[0] & false[1]'}
+
+  Logical XOR2:
+    variables:
+      left: [false, true]
+      right: [false, true]
+    outcomes: {true: 'true[0] & false[1] | false[0] & true[1]'}
+
+  Logical XOR3:
+    variables:
+      left: [false, true]
+      right: [false, true]
+    outcomes: {true: 'false[0] & true[1] | true[0] & false[1]'}
+
+  Logical XOR4:
+    variables:
+      left: [false, true]
+      right: [false, true]
+    outcomes: {true: '!false[0] & false[1] | !true[0] & !false[1]'}

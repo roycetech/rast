@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-require 'rast/assert'
-require_relative 'rule_processor'
+require 'rast/rules/rule_processor'
 
 # Validates rules
 class RuleValidator
@@ -27,37 +26,29 @@ class RuleValidator
   private
 
   def validate_multi(scenario: [], spec: nil, rule_result: [])
-    # binding.pry
-
     matched_outputs = []
     match_count = 0
 
-    rule_result.map { |result| result == 'true' }.each_with_index do |result, i|
+    rule_result.map { |result| result.to_s == 'true' }.each_with_index do |result, i|
       next unless result
 
       match_count += 1
       matched_outputs << spec.rule.outcomes[i]
     end
-    assert("Scenario must fall into a unique rule output/clause:
-     #{scenario} , matched: #{matched_outputs}") { match_count == 1 }
 
-    matched_outputs.first
-  end
-
-  def binary_outcome(outcome: '', spec: nil, expected: false)
-    is_positive = spec.pair.keys.include?(outcome)
-    if is_positive
-      expected == 'true' ? outcome : opposite(outcome: outcome, spec: spec)
-    else
-      expected == 'true' ? opposite(outcome: outcome, spec: spec) : outcome
+    Rast.assert("#{spec.description} #{scenario} must fall into a unique rule outcome/clause, matched: #{matched_outputs}") do
+      match_count == 1 || match_count == 0 && !spec.default_outcome.nil?
     end
+
+    matched_outputs.first || spec.default_outcome
   end
 
-  def opposite(outcome: '', spec: nil)
-    if spec.pair.keys.include? outcome
-      spec.pair[outcome]
+  #
+  def binary_outcome(outcome: '', spec: nil, expected: false)
+    if expected == 'true'
+      outcome
     else
-      spec.pair_reversed[outcome]
+      spec.pair[outcome]
     end
   end
 end

@@ -1,0 +1,8 @@
+---
+specs:
+  '#positive?':
+    variables: {number: [-1, 0, 1, 0.5, nil, haha, 999_999_999_999_999]}
+    outcomes:
+      true: '1 | 999999999999999 | 0.5'
+      false: '-1 | 0'
+    default: ERROR

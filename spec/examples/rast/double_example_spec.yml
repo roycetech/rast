@@ -1,0 +1,12 @@
+---
+specs:
+  '#process':
+    variables:
+      With Sim: [false, true]
+      With Product: [false, true]
+      Best: [false, true]
+      Product: [non-ayg, ayg]
+
+    exclude: false[1] & ayg | false[0] & true[2]
+    outcomes: {AYG Best: 'true[0] & true[1] & true[2] & ayg'}
+    else: 'FALSE'

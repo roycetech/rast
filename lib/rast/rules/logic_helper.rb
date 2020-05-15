@@ -8,30 +8,30 @@ module LogicHelper
   #  * @author Royce
   #  */
 
-  TRUE = '|true'
-  FALSE = '|false'
+  TRUE = '*true'
+  FALSE = '*false'
 
   # /**
   #  * @param scenario list of scenario tokens.
   #  * @param left_subscript left index.
   #  * @param right_subscript right index.
-  #  * @param left left token.
-  #  * @param right right token.
+  #  * @param left left token, no subscript.
+  #  * @param right right token, no subscript.
   #  */
   def perform_logical_and(scenario: [], left_subscript: -1, right_subscript: -1,
                           left: nil, right: nil)
-    if FALSE == left || FALSE == right
+    if FALSE == left && left_subscript == -1 || FALSE == right && right_subscript == -1
       FALSE
-    elsif TRUE == left && TRUE == right
+    elsif TRUE == left && left_subscript == -1 && TRUE == right && right_subscript == -1
       TRUE
-    elsif TRUE == left
-      if right_subscript.negative?
+    elsif TRUE == left && left_subscript == -1
+      if right_subscript < 0
         scenario.include?(right).to_s
       else
         (scenario[right_subscript] == right).to_s
       end
-    elsif TRUE == right
-      if left_subscript.negative?
+    elsif TRUE == right && right_subscript == -1
+      if left_subscript < 0
         scenario.include?(left).to_s
       else
         (scenario[left_subscript] == left).to_s
@@ -42,6 +42,8 @@ module LogicHelper
         subscript: left_subscript,
         object: left
       )
+
+      return 'false' unless left_eval
 
       right_eval = pevaluate(
         scenario: scenario,
@@ -62,21 +64,21 @@ module LogicHelper
   #  */
   def perform_logical_or(scenario: [], left_subscript: -1, right_subscript: -1,
                          left: nil, right: nil)
-    if TRUE == left || TRUE == right
+    if TRUE == left && left_subscript == -1 || TRUE == right && right_subscript == -1
       TRUE
-    elsif FALSE == left && FALSE == right
+    elsif FALSE == left && left_subscript == -1 && FALSE == right && right_subscript == -1
       FALSE
-    elsif FALSE == left
-      if right_subscript.negative?
+    elsif FALSE == left && left_subscript == -1
+      if right_subscript < 0
         scenario.include?(right).to_s
       else
         (scenario[right_subscript] == right).to_s
       end
-    elsif FALSE == right
-      if left_subscript.negative?
+    elsif FALSE == right && right_subscript == -1
+      if left_subscript < 0
         scenario.include?(left).to_s
       else
-        (scenario[left_subscript]).to_s == left
+        (scenario[left_subscript] == left).to_s
       end
     else
       left_eval = pevaluate(
@@ -84,6 +86,8 @@ module LogicHelper
         subscript: left_subscript,
         object: left
       )
+
+      return 'true' if left_eval
 
       right_eval = pevaluate(
         scenario: scenario,
@@ -103,7 +107,7 @@ module LogicHelper
   #  * @param object left or right token.
   #  */
   def pevaluate(scenario: [], subscript: -1, object: nil)
-    if subscript.negative?
+    if subscript < 0
       scenario.include?(object)
     else
       scenario[subscript] == object

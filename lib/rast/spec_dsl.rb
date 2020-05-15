@@ -1,38 +1,58 @@
 # frozen_string_literal: true
 
-require_relative 'parameter_generator'
+require 'factory_girl'
+require 'rast/parameter_generator'
 
 # Main DSL. This is the entry point of the test when running a spec.
 class SpecDSL
-  attr_accessor :subject, :rspec_methods, :execute_block, :prepare_block,
-                :transients, :outcomes, :fixtures
+  include FactoryGirl::Syntax::Methods
 
-  def initialize(subject: nil, fixtures: [], &block)
+  attr_accessor :subject, :rspec_methods, :execute_block,
+                :prepare_block, :transients, :outcomes, :fixtures, :spec_id
+
+  # # yaml-less
+  attr_writer :variables, :exclude, :include, :converters, :rules, :pair, :default_outcome
+
+  # @subject the sut instance
+  # @name the sut name to be displayed with -fd
+  def initialize(subject: nil, name: '', fixtures: [], spec_id: '', &block)
     @subject = subject
+    @spec_id = spec_id
+
+    # cannot derive name from subject when sut is a module.
+    @subject_name = name || subject.class
     @fixtures = fixtures
 
     @transients = []
-    @result = nil
     @rspec_methods = []
 
     instance_eval(&block)
   end
 
-  def result(outcome)
-    @outcome = outcome.to_s
+  # yaml-less start
+  def variables(vars)
+    @variables = vars
   end
 
-  def method_missing(method_name_symbol, *args, &block)
-    return super if method_name_symbol == :to_ary
-
-    @rspec_methods << {
-      name: method_name_symbol,
-      args: args.first,
-      block: block
-    }
-
-    self
+  def exclude(clause)
+    @exclude = clause
   end
+
+  def rules(rules)
+    @rules = {}
+
+    rules.each do |key, value|
+      calc_key = key
+      calc_key = key == :true if key == :true || key == :false
+      @rules[calc_key] = value
+    end
+  end
+
+  def outcomes(outcomes)
+    rules(outcomes)
+  end
+
+  # yaml-less end
 
   def prepare(&block)
     @prepare_block = block
@@ -42,17 +62,49 @@ class SpecDSL
   def execute(&block)
     @execute_block = block
 
-    @fixtures.sort_by! { |fixture| fixture[:expected_outcome] }
+    if @fixtures.nil?
+      parameter_generator = ParameterGenerator.new
+      parameter_generator.specs_config = { @spec_id => {
+        'variables' => @variables,
+        'pair' => @pair,
+        'converters' => @converters,
+        'rules' => @rules,
+        'exclude' => @exclude
+      } }
+
+      @fixtures = parameter_generator.generate_fixtures(spec_id: @spec_id)
+    end
+
+    @fixtures.sort_by! do |fixture|
+
+      if fixture[:expected_outcome].nil?
+        raise 'Broken initialization, check your single rule/else/default configuration'
+      end
+
+      fixture[:expected_outcome] + fixture[:scenario].to_s
+      # fixture[:scenario].to_s + fixture[:expected_outcome]
+    end
+
+    # @fixtures.reverse!
+
     generate_rspecs
   end
 
   private
 
   def generate_rspecs
-    spec = @fixtures.first[:spec]
     main_scope = self
 
-    RSpec.describe "#{@subject.class}: #{spec.description}" do
+    title = "#{@subject_name}: #{@fixtures.first[:spec].description}"
+
+    exclusion = fixtures.first[:spec].exclude_clause
+    exclusion = exclusion.join if exclusion.is_a? Array
+    title += ", EXCLUDE: '#{exclusion}'" if exclusion
+    inclusion = fixtures.first[:spec].include_clause
+    inclusion = inclusion.join if inclusion.is_a? Array
+    title += ", ONLY: '#{inclusion}'" if inclusion
+
+    RSpec.describe title do
       main_scope.fixtures.each do |fixture|
         generate_rspec(
           scope: main_scope,
@@ -67,21 +119,21 @@ end
 def generate_rspec(scope: nil, scenario: {}, expected: '')
   spec_params = scenario.keys.inject('') do |output, key|
     output += ', ' unless output == ''
-    output + "#{key}: #{scenario[key]}"
+    calc_key = scenario[key].nil? ? nil : scenario[key]
+    output + "#{key}: #{calc_key}"
   end
 
   it "[#{expected}]=[#{spec_params}]" do
     block_params = scenario.values
-    scope.prepare_block&.call(*block_params) unless scope.rspec_methods.any?
 
-    while scope.rspec_methods.any?
-      first_meth = scope.rspec_methods.shift
-      second_meth = scope.rspec_methods.shift
-      if first_meth[:name] == :allow && second_meth[:name] == :receive
-        allow(scope.subject)
-          .to receive(second_meth[:args], &second_meth[:block])
-      end
-      scope.rspec_methods.shift
+    @mysubject = scope.subject
+
+    class << self
+      define_method(:subject) { @mysubject }
+    end
+
+    if scope.rspec_methods.size > 0 || !scope.prepare_block.nil?
+      instance_exec(*block_params, &scope.prepare_block)
     end
 
     actual = scope.execute_block.call(*block_params).to_s
@@ -91,6 +143,12 @@ def generate_rspec(scope: nil, scenario: {}, expected: '')
 end
 
 # DSL Entry Point
-def spec(subject: nil, fixtures: [], &block)
-  SpecDSL.new(subject: subject, fixtures: fixtures, &block)
+def spec(subject: nil, name: '', fixtures: [], spec_id: '', &block)
+  SpecDSL.new(
+    subject: subject,
+    name: name,
+    fixtures: fixtures,
+    spec_id: spec_id,
+    &block
+  )
 end

@@ -1,0 +1,7 @@
+---
+specs:
+  '#identify_sentence_type':
+    outcomes:
+      exclamation: ["Let's do it!"]
+      question: ['Will this work?']
+      statement: ["Let's make a statement"]

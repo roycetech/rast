@@ -6,9 +6,11 @@ require './examples/prime_number'
 rast PrimeNumber do
   spec '#prime?' do
     execute do |number|
-      result subject.prime?(number)
-    rescue StandardError
-      result(:ERROR)
+      begin
+        subject.prime?(number)
+      rescue StandardError
+        :ERROR
+      end
     end
   end
 end

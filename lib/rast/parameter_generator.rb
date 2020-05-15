@@ -1,27 +1,32 @@
 # frozen_string_literal: true
 
-require 'pry'
 require 'yaml'
-require_relative 'rast_spec'
-require_relative 'rules/rule'
-require_relative 'rules/rule_evaluator'
-require_relative 'rules/rule_validator'
-
-require_relative 'converters/float_converter'
+require 'rast/rast_spec'
+require 'rast/rules/rule'
+require 'rast/rules/rule_evaluator'
+require 'rast/rules/rule_validator'
 
 # Generates the test parameters.
 class ParameterGenerator
-  def initialize(yaml_path: '')
-    @specs_config = YAML.load_file(yaml_path)['specs']
+  # Allow access so yaml-less can build the config via dsl.
+  attr_accessor :specs_config
 
-    # p @specs_config
+  def initialize(yaml_path: '')
+    @specs_config = YAML.load_file(yaml_path)['specs'] if File.exist? yaml_path
   end
 
   # addCase. Generate the combinations, then add the fixture to the final list
   def generate_fixtures(spec_id: '')
+    return nil if @specs_config.nil?
+
     spec_config = @specs_config[spec_id]
 
     spec_config[:description] = spec_id
+
+    # Keep, for backwards compatibility
+    spec_config['rules'] ||= spec_config['outcomes']
+    spec_config['default'] ||= spec_config['else']
+
     spec = instantiate_spec(spec_config)
 
     list = []
@@ -32,6 +37,7 @@ class ParameterGenerator
 
     (1...variables.size).each { |i| multipliers << variables.values[i].dup }
     scenarios = var_first.last.product(*multipliers)
+
     add_fixtures(scenarios: scenarios, spec: spec, list: list)
     list
   end
@@ -39,12 +45,25 @@ class ParameterGenerator
   private
 
   def valid_case?(scenario, spec)
-    return true if spec.exempt_rule.nil?
+    return true if spec.exclude_clause.nil? && spec.include_clause.nil?
 
-    exempt_rule = fixture.exempt_rule
     rule_evaluator = RuleEvaluator.new(converters: spec.converters)
-    rule_evaluator.parse(exempt_rule)
-    !ruleEvaluator.evaluate(scenario, spec.converters)
+
+    include_result = true
+    unless spec.exclude_clause.nil?
+      exclude_clause = Rule.sanitize(clause: spec.exclude_clause)
+      rule_evaluator.parse(expression: exclude_clause)
+      evaluate_result = rule_evaluator.evaluate(scenario: scenario, rule_token_convert: spec.token_converter)
+      include_result = evaluate_result == 'false'
+    end
+
+    return include_result if spec.include_clause.nil? || !include_result
+
+    include_clause = Rule.sanitize(clause: spec.include_clause)
+    rule_evaluator.parse(expression: include_clause)
+    include_result = rule_evaluator.evaluate(scenario: scenario, rule_token_convert: spec.token_converter) == "true"
+
+    include_result
   end
 
   # add all fixtures to the list.
@@ -52,7 +71,10 @@ class ParameterGenerator
     validator = RuleValidator.new
 
     scenarios.each do |scenario|
-      next unless valid_case?(scenario, spec)
+      good = valid_case?(scenario, spec)
+      # p "#{good} #{scenario}"
+
+      next unless good
 
       list << build_param(validator, scenario, spec)
     end
@@ -60,15 +82,6 @@ class ParameterGenerator
 
   def build_param(validator, scenario, spec)
     param = { spec: spec, scenario: {} }
-    token_converter = {}
-
-    spec.variables.keys.each_with_index do |key, index|
-      spec.variables[key].each do |element|
-        unless spec.converters.nil?
-          token_converter[element.to_s] = spec.converters[index]
-        end
-      end
-    end
 
     spec.variables.keys.zip(scenario) do |array|
       var_name = array.first.to_sym
@@ -76,7 +89,6 @@ class ParameterGenerator
       param[:scenario][var_name] = var_value
     end
 
-    param[:converter_hash] = token_converter
     param[:expected_outcome] = validator.validate(
       scenario: scenario,
       fixture: param
@@ -85,25 +97,92 @@ class ParameterGenerator
     param
   end
 
+  # Detects if rule config has one outcome to one token mapping.
+  def one_to_one(outcome_to_clause)
+    outcome_to_clause.each do |outcome, clause|
+      next if clause.is_a?(Array) && clause.size == 1
+
+      return false if RuleEvaluator.tokenize(clause: clause).size > 1
+    end
+
+    true
+  end
+
+  # Used to optimize by detecting the variables if rules config is a 1 outcome to 1 rule token.
+  def detect_variables(spec_config)
+    return nil unless one_to_one(spec_config['rules'])
+
+    tokens = spec_config['rules'].values
+    return { vars: tokens.map(&:first) } if tokens.first.is_a?(Array) && tokens.first.size == 1
+
+    { vars: spec_config['rules'].values }
+  end
+
   def instantiate_spec(spec_config)
+    if spec_config['variables'].nil?
+      spec_config['variables'] = detect_variables(spec_config)
+    end
+
     spec = RastSpec.new(
       description: spec_config[:description],
       variables: spec_config['variables'],
-      rule: Rule.new(rules: spec_config['rules'])
+      rule: Rule.new(rules: spec_config['rules']),
+      default_outcome: spec_config['default'] || spec_config['else']
     )
 
-    pair_config = spec_config['pair']
+    pair_config = calculate_pair(spec_config)
     spec.init_pair(pair_config: pair_config) unless pair_config.nil?
 
-    converters = if spec_config['converters'].nil?
-                   str_converter = StrConverter.new
-                   spec_config['variables'].map { |_var| str_converter }
-                 else
-                   spec_config['converters'].map do |converter|
-                     Object.const_get(converter).new
+    unless spec_config['exclude'].nil?
+      spec.init_exclusion(spec_config['exclude'])
+    end
+
+    unless spec_config['include'].nil?
+      spec.init_inclusion(spec_config['include'])
+    end
+
+    converters_config = spec_config['converters']
+    converters = if converters_config.nil?
+                   # when no converters defined, we detect if type is consistent, otherwise assume it's string.
+                   default_converter = DefaultConverter.new
+                   spec_config['variables'].map do |_key, array|
+                     if same_data_type(array)
+                       RuleEvaluator::DEFAULT_CONVERT_HASH[array.first.class]
+                     else
+                       default_converter
+                     end
                    end
                  end
 
     spec.init_converters(converters: converters)
+  end
+
+  def calculate_pair(spec_config)
+    pair_config = spec_config['pair']
+    return pair_config unless pair_config.nil?
+
+    outcomes = spec_config['rules'].keys
+    if outcomes.size == 1
+      if [TrueClass, FalseClass].include?(outcomes.first.class)
+        return { outcomes.first => !outcomes.first }
+      end
+
+      if %w[true false].include?(outcomes.first)
+        return { outcomes.first => outcomes.first == 'true' ? 'false' : 'true' }
+      end
+
+      return { outcomes.first => spec_config['default'] } if spec_config['default']
+    end
+
+    {}
+  end
+
+  def same_data_type(array)
+    type = array.first.class
+    array.each do |element|
+      return false if element.class != type &&
+                      ![FalseClass, TrueClass].include?(element.class)
+    end
+    true
   end
 end

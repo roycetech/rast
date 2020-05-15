@@ -1,0 +1,7 @@
+---
+specs:
+  '#phone_plan_name':
+    outcomes:
+      AS YOU GO: ayg
+      2GB DATA: data
+      1GB UNL: unl

@@ -2,18 +2,11 @@
 specs:
   '#assess':
     variables:
-      Position:
-        - Manager
-        - Senior Engineer
-        - Engineer
+      Position: [Engineer, Senior Engineer, Manager]
       Score: [5, 6, 7, 8, 9, 10]
 
-    converters:
-      - StrConverter
-      - FloatConverter
-
-    rules:
-      Over Qualified: Engineer&(9|10)
-      Accept: Manager&10|Senior Engineer&(9|10)|Engineer&8
-      Shortlist: Manager&9|Senior Engineer&8|Engineer&7
-      Reject: 5|6|Manager&(7|8)|Senior Engineer&7
+    outcomes:
+      Over Qualified: Engineer & (9|10)
+      Accept: Manager & 10 | Senior Engineer & (9|10) | Engineer & 8
+      Shortlist: Manager & 9 | Senior Engineer & 8 | Engineer & 7
+      Reject: 5 | 6 | Manager & (7|8) | Senior Engineer & 7

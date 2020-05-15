@@ -20,4 +20,12 @@ class LogicChecker
   def or(argument1, argument2)
     argument1 || argument2
   end
+
+  # Perform logical XOR operation on two arguments.
+  #
+  # @param argument1 first argument of Boolean type.
+  # @param argument2 second argument of Boolean type.
+  def xor(argument1, argument2)
+    argument1 && !argument2 || !argument1 && argument2
+  end
 end

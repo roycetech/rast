@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'rule_evaluator'
+require 'rast/rules/rule_evaluator'
 
 # undoc
 class RuleProcessor
@@ -35,7 +35,7 @@ class RuleProcessor
 
     list << rule_evaluator.evaluate(
       scenario: scenario,
-      rule_token_convert: fixture[:converter_hash]
+      rule_token_convert: spec.token_converter
     )
   end
 end

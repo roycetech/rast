@@ -23,18 +23,24 @@ class Rule
     duplicates = []
 
     rules.each do |outcome, clause|
-      if duplicates.include?(outcome)
-        raise "#{outcome} matched multiple clauses"
-      end
+      # if duplicates.include?(outcome)
+      #   raise "#{outcome} matched multiple clauses"
+      # end
 
-      duplicates << outcome
-      clause = remove_spaces(string: clause, separator: '\(')
-      clause = remove_spaces(string: clause, separator: '\)')
-      clause = remove_spaces(string: clause, separator: '&')
-      clause = remove_spaces(string: clause, separator: '\|')
-      clause = remove_spaces(string: clause, separator: '!')
-      @outcome_clause_hash[outcome.to_s] = clause.strip
+      # duplicates << outcome
+
+      @outcome_clause_hash[outcome.to_s] = Rule.sanitize(clause: clause)
     end
+  end
+
+  def self.sanitize(clause: '')
+    return clause if clause.is_a?(Array)
+
+    cleaner = Rule.remove_spaces(token: clause, separator: '(')
+    cleaner = Rule.remove_spaces(token: cleaner, separator: ')')
+    cleaner = Rule.remove_spaces(token: cleaner, separator: '&')
+    cleaner = Rule.remove_spaces(token: cleaner, separator: '|')
+    Rule.remove_spaces(token: cleaner, separator: '!').strip
   end
 
   def size
@@ -47,8 +53,9 @@ class Rule
   #  * @param string rule clause.
   #  * @param separator rule clause token.
   #  */
-  def remove_spaces(string: '', separator: '')
-    string.gsub(Regexp.new("\\s*#{separator} \\s*"), separator)
+  def self.remove_spaces(token: nil, separator: '')
+    escape = %w[( ) |].include?(separator) ? '\\' : ''
+    token.to_s.gsub(Regexp.new("\\s*#{escape}#{separator}\\s*"), separator)
   end
 
   # /**
@@ -64,30 +71,5 @@ class Rule
   #  */
   def clause(outcome: '')
     @outcome_clause_hash[outcome]
-  end
-
-  # /**
-  #  * Get rule result give a fixed list of scenario tokens. Used for fixed
-  #  * list.
-  #  *
-  #  * @param scenario of interest.
-  #  * @return the actionToRuleClauses
-  #  */
-  def rule_outcome(scenario: [])
-    scenario_string = scenario.to_s
-    anded_scenario = scenario_string[1..-2].gsub(/,\s/, '&')
-
-    @outcome_clause_hash.each do |key, clause|
-      or_list_clause = clause.split('\|').map(&:strip)
-      return key if or_list_clause.include?(anded_scenario)
-    end
-  end
-
-  # /**
-  #  * @see {@link Object#toString()}
-  #  * @return String representation of this instance.
-  #  */
-  def to_s
-    @outcome_clause_hash.to_s
   end
 end

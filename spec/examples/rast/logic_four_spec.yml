@@ -1,0 +1,11 @@
+---
+specs:
+  Four:
+    variables:
+      left: [false, true]
+      right: [false, true]
+      third: [false, true]
+      type: [a, b]
+
+    outcomes:
+      true: false[0] & false[1] & false[2] & a
