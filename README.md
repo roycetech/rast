@@ -4,7 +4,7 @@ RSpec All Scenario Testing
 
 [![Gem Version](https://badge.fury.io/rb/rast.svg)](https://badge.fury.io/rb/rast)
 [![Build Status](https://travis-ci.com/roycetech/rast.svg?branch=master)](https://travis-ci.com/roycetech/rast)
-[![Coverage Status](https://coveralls.io/repos/github/roycetech/rast/badge.svg)](https://coveralls.io/github/roycetech/rast)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/280a80e7e03350b7a3d3/test_coverage)](https://codeclimate.com/github/roycetech/rast/test_coverage)
 [![Maintainability](https://api.codeclimate.com/v1/badges/280a80e7e03350b7a3d3/maintainability)](https://codeclimate.com/github/roycetech/rast/maintainability)
 
 This library runs on top of RSpec to provide basically a parameterized unit testing pattern. It follows a specific pattern of writing unit tests, enabling a predictable, complete and outputs a result that is simple to analyze.
