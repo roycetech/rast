@@ -4,6 +4,8 @@ source 'https://rubygems.org'
 
 git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 
+gem 'coveralls', require: false
+
 
 group :development, :test do
   gem 'factory_girl', '~> 4.7'
