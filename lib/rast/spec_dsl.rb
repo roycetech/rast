@@ -77,12 +77,11 @@ class SpecDSL
 
     @fixtures.sort_by! do |fixture|
 
-      if fixture[:expected_outcome].nil?
+      if fixture[:expected].nil?
         raise 'Broken initialization, check your single rule/else/default configuration'
       end
 
-      fixture[:expected_outcome] + fixture[:scenario].to_s
-      # fixture[:scenario].to_s + fixture[:expected_outcome]
+      fixture[:expected] + fixture[:scenario].to_s
     end
 
     # @fixtures.reverse!
@@ -95,25 +94,27 @@ class SpecDSL
   def generate_rspecs
     main_scope = self
 
-    title = "#{@subject_name}: #{@fixtures.first[:spec].description}"
-
-    exclusion = fixtures.first[:spec].exclude_clause
-    exclusion = exclusion.join if exclusion.is_a? Array
-    title += ", EXCLUDE: '#{exclusion}'" if exclusion
-    inclusion = fixtures.first[:spec].include_clause
-    inclusion = inclusion.join if inclusion.is_a? Array
-    title += ", ONLY: '#{inclusion}'" if inclusion
-
-    RSpec.describe title do
+    RSpec.describe build_title do
       main_scope.fixtures.each do |fixture|
         generate_rspec(
           scope: main_scope,
           scenario: fixture[:scenario],
-          expected: fixture[:expected_outcome]
+          expected: fixture[:expected]
         )
       end
     end
   end
+end
+
+def build_title
+  title = "#{@subject_name}: #{@fixtures.first[:spec].description}"
+
+  exclusion = fixtures.first[:spec].exclude_clause
+  exclusion = exclusion.join if exclusion.is_a? Array
+  title += ", EXCLUDE: '#{exclusion}'" if exclusion
+  inclusion = fixtures.first[:spec].include_clause
+  inclusion = inclusion.join if inclusion.is_a? Array
+  title + ", ONLY: '#{inclusion}'" if inclusion
 end
 
 def generate_rspec(scope: nil, scenario: {}, expected: '')

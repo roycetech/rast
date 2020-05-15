@@ -27,7 +27,7 @@ class ParameterGenerator
     spec_config['rules'] ||= spec_config['outcomes']
     spec_config['default'] ||= spec_config['else']
 
-    spec = instantiate_spec(spec_config)
+    spec = build_spec(spec_config)
 
     list = []
 
@@ -89,10 +89,7 @@ class ParameterGenerator
       param[:scenario][var_name] = var_value
     end
 
-    param[:expected_outcome] = validator.validate(
-      scenario: scenario,
-      fixture: param
-    )
+    param[:expected] = validator.validate(scenario: scenario, fixture: param)
 
     param
   end
@@ -108,53 +105,65 @@ class ParameterGenerator
     true
   end
 
-  # Used to optimize by detecting the variables if rules config is a 1 outcome to 1 rule token.
+  # Used to optimize by detecting the variables if rules config is a 1 outcome
+  # to 1 rule token.
   def detect_variables(spec_config)
     return nil unless one_to_one(spec_config['rules'])
 
     tokens = spec_config['rules'].values
-    return { vars: tokens.map(&:first) } if tokens.first.is_a?(Array) && tokens.first.size == 1
+    if tokens.first.is_a?(Array) && tokens.first.size == 1
+      return { vars: tokens.map(&:first) }
+    end
 
     { vars: spec_config['rules'].values }
   end
 
   def instantiate_spec(spec_config)
-    if spec_config['variables'].nil?
-      spec_config['variables'] = detect_variables(spec_config)
-    end
-
-    spec = RastSpec.new(
+    RastSpec.new(
       description: spec_config[:description],
       variables: spec_config['variables'],
       rule: Rule.new(rules: spec_config['rules']),
       default_outcome: spec_config['default'] || spec_config['else']
     )
+  end
 
+  def build_spec(spec_config)
+    if spec_config['variables'].nil?
+      spec_config['variables'] = detect_variables(spec_config)
+    end
+
+    spec = instantiate_spec(spec_config)
     pair_config = calculate_pair(spec_config)
     spec.init_pair(pair_config: pair_config) unless pair_config.nil?
 
+    configure_include_exclude(spec, spec_config)
+    spec.init_converters(converters: generate_converters(spec_config))
+  end
+
+  def generate_converters(spec_config)
+    converters_config = spec_config['converters']
+    return converters unless converters_config.nil?
+
+    # when no converters defined, we detect if type is consistent, otherwise
+    # assume it's string.
+    default_converter = DefaultConverter.new
+    spec_config['variables'].map do |_key, array|
+      if same_data_type(array)
+        RuleEvaluator::DEFAULT_CONVERT_HASH[array.first.class]
+      else
+        default_converter
+      end
+    end
+  end
+
+  def configure_include_exclude(spec, spec_config)
     unless spec_config['exclude'].nil?
       spec.init_exclusion(spec_config['exclude'])
     end
 
-    unless spec_config['include'].nil?
-      spec.init_inclusion(spec_config['include'])
-    end
+    return if spec_config['include'].nil?
 
-    converters_config = spec_config['converters']
-    converters = if converters_config.nil?
-                   # when no converters defined, we detect if type is consistent, otherwise assume it's string.
-                   default_converter = DefaultConverter.new
-                   spec_config['variables'].map do |_key, array|
-                     if same_data_type(array)
-                       RuleEvaluator::DEFAULT_CONVERT_HASH[array.first.class]
-                     else
-                       default_converter
-                     end
-                   end
-                 end
-
-    spec.init_converters(converters: converters)
+    spec.init_inclusion(spec_config['include'])
   end
 
   def calculate_pair(spec_config)
@@ -162,19 +171,25 @@ class ParameterGenerator
     return pair_config unless pair_config.nil?
 
     outcomes = spec_config['rules'].keys
-    if outcomes.size == 1
-      if [TrueClass, FalseClass].include?(outcomes.first.class)
-        return { outcomes.first => !outcomes.first }
-      end
+    return {} unless outcomes.size == 1
 
-      if %w[true false].include?(outcomes.first)
-        return { outcomes.first => outcomes.first == 'true' ? 'false' : 'true' }
-      end
+    boolean_pair = boolean_pair(outcomes)
+    return boolean_pair if boolean_pair
 
-      return { outcomes.first => spec_config['default'] } if spec_config['default']
+    { outcomes.first => spec_config['default'] } if spec_config['default']
+  end
+
+  # refactored out of calculate_pair.
+  def boolean_pair(outcomes)
+    if [TrueClass, FalseClass].include?(outcomes.first.class)
+      return { outcomes.first => !outcomes.first }
     end
 
-    {}
+    if %w[true false].include?(outcomes.first)
+      return { outcomes.first => (outcomes.first != 'true').to_s }
+    end
+
+    false
   end
 
   def same_data_type(array)

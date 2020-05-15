@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # combination of yaml and no yaml
 
 require './examples/enum_module'

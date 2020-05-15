@@ -6,10 +6,7 @@ module EnumModule
     return false unless back_card.is_a?(Array) && back_card.any?
 
     return true if ordered?(back_card) || enum_with_header?(back_card)
-
-    back_card.each { |element| return false unless element[/^[-+*]\s.*/] }
-
-    return false unless same_prefix?(back_card)
+    return false if detect_non_ol(back_card) || !same_prefix?(back_card)
 
     true
   end
@@ -24,10 +21,18 @@ module EnumModule
 
   private
 
+  def detect_non_ol(back_card)
+    back_card.each { |element| return true unless element[/^[-+*]\s.*/] }
+
+    false
+  end
+
   def enum_with_header?(back_card)
     return false if back_card.first[/^[-+*]\s.*/]
 
-    back_card[1..back_card.size].each { |element| return false unless element[/^[-+*]\s.*/] }
+    back_card[1..back_card.size].each do |element|
+      return false unless element[/^[-+*]\s.*/]
+    end
 
     true
   end
