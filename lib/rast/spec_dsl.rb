@@ -7,11 +7,12 @@ require 'rast/parameter_generator'
 class SpecDSL
   include FactoryGirl::Syntax::Methods
 
-  attr_accessor :subject, :rspec_methods, :execute_block,
+  attr_accessor :subject, :execute_block,
                 :prepare_block, :transients, :outcomes, :fixtures, :spec_id
 
   # # yaml-less
-  attr_writer :variables, :exclude, :include, :converters, :rules, :pair, :default_outcome
+  attr_writer :variables, :exclude, :include, :converters, :rules, :pair,
+              :default_outcome
 
   # @subject the sut instance
   # @name the sut name to be displayed with -fd
@@ -24,7 +25,6 @@ class SpecDSL
     @fixtures = fixtures
 
     @transients = []
-    @rspec_methods = []
 
     instance_eval(&block)
   end
@@ -108,23 +108,25 @@ end
 
 def build_title
   title = "#{@subject_name}: #{@fixtures.first[:spec].description}"
+  title += append_exclusion_title
+  title += append_inclusion_title
+  title
+end
 
-  exclusion = fixtures.first[:spec].exclude_clause
+def append_exclusion_title
+  exclusion = @fixtures.first[:spec].exclude_clause
   exclusion = exclusion.join if exclusion.is_a? Array
-  title += ", EXCLUDE: '#{exclusion}'" if exclusion
-  inclusion = fixtures.first[:spec].include_clause
+  exclusion ? ", EXCLUDE: '#{exclusion}'" : ''
+end
+
+def append_inclusion_title
+  inclusion = @fixtures.first[:spec].include_clause
   inclusion = inclusion.join if inclusion.is_a? Array
-  title + ", ONLY: '#{inclusion}'" if inclusion
+  inclusion ? ", ONLY: '#{inclusion}'" : ''
 end
 
 def generate_rspec(scope: nil, scenario: {}, expected: '')
-  spec_params = scenario.keys.inject('') do |output, key|
-    output += ', ' unless output == ''
-    calc_key = scenario[key].nil? ? nil : scenario[key]
-    output + "#{key}: #{calc_key}"
-  end
-
-  it "[#{expected}]=[#{spec_params}]" do
+  it _it_title(expected, scenario) do
     block_params = scenario.values
 
     @mysubject = scope.subject
@@ -133,7 +135,7 @@ def generate_rspec(scope: nil, scenario: {}, expected: '')
       define_method(:subject) { @mysubject }
     end
 
-    if scope.rspec_methods.size > 0 || !scope.prepare_block.nil?
+    unless scope.prepare_block.nil?
       instance_exec(*block_params, &scope.prepare_block)
     end
 
@@ -141,6 +143,16 @@ def generate_rspec(scope: nil, scenario: {}, expected: '')
 
     expect(actual).to eq(expected)
   end
+end
+
+def _it_title(expected, scenario)
+  spec_params = scenario.keys.inject('') do |output, key|
+    output += ', ' unless output == ''
+    calc_key = scenario[key].nil? ? nil : scenario[key]
+    output + "#{key}: #{calc_key}"
+  end
+
+  "[#{expected}]=[#{spec_params}]"
 end
 
 # DSL Entry Point

@@ -128,22 +128,30 @@ class RuleEvaluator
     if open_bracket?(token: token)
       @stack_operations << token
     elsif close_bracket?(token: token)
-      while @stack_operations.any? &&
-            !open_bracket?(token: @stack_operations.last.strip)
-        @stack_rpn << @stack_operations.pop
-      end
-      @stack_operations.pop
+      shunt_close
     elsif operator?(token: token)
-      while !@stack_operations.empty? &&
-            operator?(token: @stack_operations.last.strip) &&
-            precedence(symbol_char: token[0]) <=
-            precedence(symbol_char: @stack_operations.last.strip[0])
-        @stack_rpn << @stack_operations.pop
-      end
-      @stack_operations << token
+      shunt_operator(token)
     else
       @stack_rpn << token
     end
+  end
+
+  def shunt_operator(token)
+    while !@stack_operations.empty? &&
+          operator?(token: @stack_operations.last.strip) &&
+          precedence(symbol_char: token[0]) <=
+          precedence(symbol_char: @stack_operations.last.strip[0])
+      @stack_rpn << @stack_operations.pop
+    end
+    @stack_operations << token
+  end
+
+  def shunt_close
+    while @stack_operations.any? &&
+          !open_bracket?(token: @stack_operations.last.strip)
+      @stack_rpn << @stack_operations.pop
+    end
+    @stack_operations.pop
   end
 
   private
@@ -171,29 +179,36 @@ class RuleEvaluator
 
     # /* get the clone of the RPN stack for further evaluating */
     stack_rpn_clone = Marshal.load(Marshal.dump(@stack_rpn))
-
-    # /* evaluating the RPN expression */
-    while stack_rpn_clone.any?
-      token = stack_rpn_clone.pop
-      if operator?(token: token)
-        if NOT.symbol == token
-          evaluate_multi_not(scenario: scenario)
-        else
-          evaluate_multi(
-            scenario: scenario,
-            rule_token_convert: rule_token_convert,
-            operator: RuleEvaluator.operator_from_symbol(symbol: token[0])
-          )
-        end
-      else
-        @stack_answer << token
-      end
-    end
+    evaluate_stack_rpn(stack_rpn_clone, scenario, rule_token_convert)
 
     raise 'Some operator is missing' if @stack_answer.size > 1
 
     last = @stack_answer.pop
     last[1..last.size]
+  end
+
+  # evaluating the RPN expression
+  def evaluate_stack_rpn(stack_rpn, scenario, rule_token_convert)
+    while stack_rpn.any?
+      token = stack_rpn.pop
+      if operator?(token: token)
+        evaluate_operator(scenario, rule_token_convert, token)
+      else
+        @stack_answer << token
+      end
+    end
+  end
+
+  def evaluate_operator(scenario, rule_token_convert, token)
+    if NOT.symbol == token
+      evaluate_multi_not(scenario: scenario)
+    else
+      evaluate_multi(
+        scenario: scenario,
+        rule_token_convert: rule_token_convert,
+        operator: RuleEvaluator.operator_from_symbol(symbol: token[0])
+      )
+    end
   end
 
   # /**

@@ -17,10 +17,10 @@ rast EnumModule do
       ] })
 
     outcomes('true' => [
-            ['- a', '- b'],
-            '|',
-            ['These are the options:', '- a', '- b']
-          ])
+               ['- a', '- b'],
+               '|',
+               ['These are the options:', '- a', '- b']
+             ])
     execute { |param| subject.enum? param }
   end
 
@@ -29,8 +29,7 @@ rast EnumModule do
       [
         ['- apple', '- banana'],
         ['1. one', '2. two']
-      ]
-    })
+      ] })
 
     rules('true' => [['1. one', '2. two']])
     execute { |param| subject.ordered? param }
