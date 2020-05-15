@@ -8,7 +8,7 @@ require 'rast/converters/default_converter'
 require 'rast/converters/bool_converter'
 require 'rast/converters/str_converter'
 
-# Evaluates the rules.
+# Evaluates the rules. "Internal refers to the `*true` or `*false` results."
 class RuleEvaluator
   include LogicHelper
 
@@ -231,11 +231,7 @@ class RuleEvaluator
       operation: operator.name.to_sym
     )
 
-    @stack_answer << if answer[0] == '*'
-                       answer
-                     else
-                       "*#{answer}"
-                     end
+    @stack_answer << format_internal_result(answer)
   end
 
   # /**
@@ -249,22 +245,32 @@ class RuleEvaluator
              elsif LogicHelper::FALSE == latest
                LogicHelper::TRUE
              else
-               subscript = extract_subscript(token: latest)
-               converter = DEFAULT_CONVERT_HASH[scenario.first.class]
-               if subscript < 0
-                 converted = converter.convert(latest)
-                 (!scenario.include?(converted)).to_s
-               else
-                 converted = converter.convert(latest[RE_TOKEN_BODY])
-                 (scenario[subscript] != converted).to_s
-               end
+               evaluate_non_internal(scenario, latest)
              end
 
-    @stack_answer << if answer[0] == '*'
-                       answer
-                     else
-                       "*#{answer}"
-                     end
+    @stack_answer << format_internal_result(answer)
+  end
+
+  def evaluate_non_internal(scenario, latest)
+    subscript = extract_subscript(token: latest)
+    converter = DEFAULT_CONVERT_HASH[scenario.first.class]
+    if subscript < 0
+      converted = converter.convert(latest)
+      (!scenario.include?(converted)).to_s
+    else
+      converted = converter.convert(latest[RE_TOKEN_BODY])
+      (scenario[subscript] != converted).to_s
+    end
+  end
+
+  # returns true if answer starts with *, *true if answer is true, same goes for
+  # false.
+  def format_internal_result(answer)
+    if answer[0] == '*'
+      answer
+    else
+      "*#{answer}"
+    end
   end
 
   # /** @param scenario to evaluate against the rule expression. */
