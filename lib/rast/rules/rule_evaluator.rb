@@ -99,27 +99,28 @@ class RuleEvaluator
   #  * @param rule_token_convert token to converter map.
   #  * @param default_converter default converter to use.
   #  */
-  def next_value(rule_token_convert: {}, default_converter: nil)
-    subscript = -1
-    retval = []
-    value = @stack_answer.pop
+  def next_value(rule_token_convert: {})
+    token = @stack_answer.pop
+    default = {
+      subscript: -1,
+      value: token
+    }
 
-    return [-1, value] if value.is_a? Array
+    return default if token.is_a?(Array) || [TRUE, FALSE].include?(token)
 
-    if TRUE != value && FALSE != value
-      subscript = extract_subscript(token: value.to_s)
-      value_str = value.to_s.strip
-      value = if subscript > -1
-                value_token = value_str[/^.+(?=\[)/]
-                rule_token_convert[value_token].convert(value_token)
-              else
-                rule_token_convert[value_str].convert(value_str)
-              end
-    end
+    next_value_with_subscript(rule_token_convert, token)
+  end
 
-    retval << subscript
-    retval << value
-    retval
+  # 1private
+  def next_value_with_subscript(rule_token_convert, token)
+    token_cleaned = token.to_s.strip
+    subscript = extract_subscript(token: token_cleaned)
+    token_body = subscript > -1 ? token_cleaned[/^.+(?=\[)/] : token_cleaned
+
+    {
+      value: rule_token_convert[token_body].convert(token_body),
+      subscript: subscript
+    }
   end
 
   # /** @param token token. */
@@ -201,28 +202,18 @@ class RuleEvaluator
   #  * @param operator OR/AND.
   #  */
   def evaluate_multi(scenario: [], rule_token_convert: {}, operator: nil)
-    default_converter = DEFAULT_CONVERT_HASH[scenario.first.class]
-
     # Convert 'nil' to nil.
-    formatted_scenario = scenario.map { |token| token == 'nil' ? nil: token }
+    formatted_scenario = scenario.map { |token| token == 'nil' ? nil : token }
 
-    left_arr = next_value(
-      rule_token_convert: rule_token_convert,
-      default_converter: default_converter
-    )
-
-    right_arr = next_value(
-      rule_token_convert: rule_token_convert,
-      default_converter: default_converter
-    )
+    left = next_value(rule_token_convert: rule_token_convert)
+    right = next_value(rule_token_convert: rule_token_convert)
 
     answer = send(
-      "perform_logical_#{operator.name}",
+      :perform_logical,
       scenario: formatted_scenario,
-      left_subscript: left_arr[0],
-      right_subscript: right_arr[0],
-      left: left_arr[1],
-      right: right_arr[1]
+      left: left,
+      right: right,
+      operation: operator.name.to_sym
     )
 
     @stack_answer << if answer[0] == '*'

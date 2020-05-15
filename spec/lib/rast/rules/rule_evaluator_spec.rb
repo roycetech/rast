@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require './lib/rast'
 require './lib/rast/rules/rule_evaluator'
 
@@ -10,7 +12,6 @@ rast RuleEvaluator do
 
   spec '#evaluate_multi_not' do
     execute do |scenario, last_answer, subscript|
-
       top = last_answer.to_s
       top = "#{top}[#{subscript}]" if subscript > -1
 

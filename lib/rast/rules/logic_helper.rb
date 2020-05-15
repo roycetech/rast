@@ -11,62 +11,33 @@ module LogicHelper
   TRUE = '*true'
   FALSE = '*false'
 
-  # /**
-  #  * @param scenario list of scenario tokens.
-  #  * @param left_subscript left index.
-  #  * @param right_subscript right index.
-  #  * @param left left token, no subscript.
-  #  * @param right right token, no subscript.
-  #  */
-  def perform_logical_and(
-    scenario: [],
-    left_subscript: -1,
-    right_subscript: -1,
-    left: nil,
-    right: nil
-  )
-
-    evaluated = both_internal_and?(left, left_subscript, right, right_subscript)
-    return evaluated if evaluated
-
-    if internal_match?(TRUE, left, left_subscript)
-      return present?(scenario, right, right_subscript).to_s
-    end
-
-    if internal_match?(TRUE, right, right_subscript)
-      return present?(scenario, left, left_subscript).to_s
-    end
-
-    evaluate_and(scenario, left, left_subscript, right, right_subscript).to_s
-  end
+  OPPOSITE = {
+    TRUE => FALSE,
+    FALSE => TRUE
+  }.freeze
 
   # /**
-  #  * @param scenario list of scenario tokens.
-  #  * @param left_subscript left index.
-  #  * @param right_subscript right index.
-  #  * @param left left token.
-  #  * @param right right token.
+  #  * @scenario list of scenario tokens.
+  #  * @left left left token object.
+  #  * @right right right token object.
+  #  * @operation :and or :or.
   #  */
-  def perform_logical_or(scenario: [], left_subscript: -1, right_subscript: -1,
-                         left: nil, right: nil)
-    evaluated = both_internal_or?(left, left_subscript, right, right_subscript)
+  def perform_logical(scenario: [], left: {}, right: {}, operation: :nil)
+    evaluated = send(:both_internal?, left, right, operation)
     return evaluated if evaluated
 
-    if internal_match?(FALSE, left, left_subscript)
-      return present?(scenario, right, right_subscript).to_s
-    end
+    default = operation == :and ? TRUE : FALSE
+    return present?(scenario, right).to_s if internal_match?(default, left)
 
-    if internal_match?(FALSE, right, right_subscript)
-      return present?(scenario, left, left_subscript).to_s
-    end
+    return present?(scenario, left).to_s if internal_match?(default, right)
 
-    evaluate_or(scenario, left, left_subscript, right, right_subscript).to_s
+    send("evaluate_#{operation}", scenario, left, right).to_s
   end
 
   # /**
   #  * Check if the token is opening bracket.
   #  *
-  #  * @param token Input <code>String</code> token
+  #  * @token Input <code>String</code> token
   #  * @return <code>boolean</code> output
   #  */
   def open_bracket?(token: '')
@@ -85,49 +56,39 @@ module LogicHelper
 
   private
 
-  def both_internal_and?(left, left_subscript, right, right_subscript)
-    if internal_match?(FALSE, left, left_subscript) ||
-       internal_match?(FALSE, right, right_subscript)
+  # @left hash containing token and subscript
+  # @right hash containing token and subscript
+  # @operation symbol either :and or :or
+  def both_internal?(left, right, operation)
+    default = operation == :and ? FALSE : TRUE
 
-      return FALSE
+    if internal_match?(default, left) || internal_match?(default, right)
+      return default
     end
 
-    if internal_match?(TRUE, left, left_subscript) &&
-       internal_match?(TRUE, right, right_subscript)
-
-      TRUE
+    opposite = OPPOSITE[default]
+    if internal_match?(opposite, left) && internal_match?(opposite, right)
+      return opposite
     end
+
+    false
   end
 
-  def both_internal_or?(left, left_subscript, right, right_subscript)
-    if internal_match?(TRUE, left, left_subscript) ||
-       internal_match?(TRUE, right, right_subscript)
-
-      return TRUE
-    end
-
-    if internal_match?(FALSE, left, left_subscript) &&
-       internal_match?(FALSE, right, right_subscript)
-
-      FALSE
-    end
-  end
-
-  def evaluate_and(scenario, left, left_subscript, right, right_subscript)
-    left_eval = present?(scenario, left, left_subscript)
+  def evaluate_and(scenario, left, right)
+    left_eval = present?(scenario, left)
 
     return false unless left_eval
 
-    right_eval = present?(scenario, right, right_subscript)
+    right_eval = present?(scenario, right)
     left_eval && right_eval
   end
 
-  def evaluate_or(scenario, left, left_subscript, right, right_subscript)
-    left_eval = present?(scenario, left, left_subscript)
+  def evaluate_or(scenario, left, right)
+    left_eval = present?(scenario, left)
 
     return true if left_eval
 
-    right_eval = present?(scenario, right, right_subscript)
+    right_eval = present?(scenario, right)
     left_eval || right_eval
   end
 
@@ -138,15 +99,15 @@ module LogicHelper
   #  * @param subscript scenario token subscript.
   #  * @param object left or right token.
   #  */
-  def present?(scenario, value, subscript)
-    if subscript < 0
-      scenario.include?(value)
+  def present?(scenario, token)
+    if token[:subscript] < 0
+      scenario.include?(token[:value])
     else
-      scenario[subscript] == value
+      scenario[token[:subscript]] == token[:value]
     end
   end
 
-  def internal_match?(internal, value, subscript)
-    value == internal && subscript == -1
+  def internal_match?(internal, token)
+    token[:value] == internal && token[:subscript] == -1
   end
 end

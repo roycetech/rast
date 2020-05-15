@@ -99,7 +99,7 @@ class ParameterGenerator
 
   # Detects if rule config has one outcome to one token mapping.
   def one_to_one(outcome_to_clause)
-    outcome_to_clause.each do |outcome, clause|
+    outcome_to_clause.each do |_outcome, clause|
       next if clause.is_a?(Array) && clause.size == 1
 
       return false if RuleEvaluator.tokenize(clause: clause).size > 1

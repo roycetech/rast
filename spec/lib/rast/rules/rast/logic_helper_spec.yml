@@ -1,6 +1,6 @@
 ---
 specs:
-  '#perform_logical_and':
+  '#perform_logical, AND':
     variables:
       scenario:
         - [false, false]
@@ -434,7 +434,7 @@ specs:
         - [true, false]
         - ')'
 
-  '#perform_logical_or':
+  '#perform_logical, OR':
     variables:
       scenario:
         - [false, false]
