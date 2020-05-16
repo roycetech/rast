@@ -3,9 +3,10 @@
 # Functions for detecting an enum.
 module EnumModule
   def enum?(back_card)
-    return false unless back_card.is_a?(Array) && back_card.any?
+    return false unless valid?(back_card)
 
-    return true if ordered?(back_card) || enum_with_header?(back_card)
+    return true if ordered_or_headered?(back_card)
+
     return false if detect_non_ol(back_card) || !same_prefix?(back_card)
 
     true
@@ -20,6 +21,14 @@ module EnumModule
   end
 
   private
+
+  def valid?(back_card)
+    back_card.is_a?(Array) && back_card.any?
+  end
+
+  def ordered_or_headered?(back_card)
+    ordered?(back_card) || enum_with_header?(back_card)
+  end
 
   def detect_non_ol(back_card)
     back_card.each { |element| return true unless element[/^[-+*]\s.*/] }
