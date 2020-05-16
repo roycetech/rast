@@ -16,6 +16,11 @@ module LogicHelper
     FALSE => TRUE
   }.freeze
 
+  LOGIC_PRIMARY_RESULT = {
+    and: FALSE,
+    or: TRUE
+  }.freeze
+
   # /**
   #  * @scenario list of scenario tokens.
   #  * @left left left token object.
@@ -60,8 +65,7 @@ module LogicHelper
   # @right hash containing token and subscript
   # @operation symbol either :and or :or
   def both_internal?(left, right, operation)
-    default = operation == :and ? FALSE : TRUE
-
+    default = LOGIC_PRIMARY_RESULT[operation]
     if internal_match?(default, left) || internal_match?(default, right)
       return default
     end

@@ -47,16 +47,19 @@ class ParameterGenerator
   def valid_case?(scenario, spec)
     return true unless with_optional_clause?(spec)
 
-    # rule_evaluator = RuleEvaluator.new(converters: spec.converters)
-
     include_result = true
     unless spec.exclude_clause.nil?
       include_result = exclude_scenario?(spec, scenario)
     end
 
-    return include_result if spec.include_clause.nil? || !include_result
+    return include_result if no_include_or_dont_include?(spec, include_result)
 
     include_scenario?(spec, scenario)
+  end
+
+  # blech!
+  def no_include_or_dont_include?(spec, include_result)
+    spec.include_clause.nil? || !include_result
   end
 
   def include_scenario?(spec, scenario)
