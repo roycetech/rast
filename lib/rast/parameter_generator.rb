@@ -49,12 +49,12 @@ class ParameterGenerator
 
     include_result = true
     unless spec.exclude_clause.nil?
-      include_result = exclude_scenario?(spec, scenario)
+      include_result = qualify_secario?(spec, scenario, false)
     end
 
     return include_result if no_include_or_dont_include?(spec, include_result)
 
-    include_scenario?(spec, scenario)
+    qualify_secario?(spec, scenario, true)
   end
 
   # blech!
@@ -62,24 +62,15 @@ class ParameterGenerator
     spec.include_clause.nil? || !include_result
   end
 
-  def include_scenario?(spec, scenario)
+  def qualify_secario?(spec, scenario, is_included)
+    action = is_included ? 'include' : 'exclude'
     rule_evaluator = RuleEvaluator.new(converters: spec.converters)
-    include_clause = Rule.sanitize(clause: spec.include_clause)
-    rule_evaluator.parse(expression: include_clause)
+    clause = Rule.sanitize(clause: spec.send("#{action}_clause"))
+    rule_evaluator.parse(expression: clause)
     rule_evaluator.evaluate(
       scenario: scenario,
       rule_token_convert: spec.token_converter
-    ) == 'true'
-  end
-
-  def exclude_scenario?(spec, scenario)
-    rule_evaluator = RuleEvaluator.new(converters: spec.converters)
-    exclude_clause = Rule.sanitize(clause: spec.exclude_clause)
-    rule_evaluator.parse(expression: exclude_clause)
-    rule_evaluator.evaluate(
-      scenario: scenario,
-      rule_token_convert: spec.token_converter
-    ) == 'false'
+    ) == is_included.to_s
   end
 
   # Has an exclude or include clause
