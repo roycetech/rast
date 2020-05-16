@@ -11,8 +11,13 @@ class RuleValidator
     )
 
     spec = fixture[:spec]
-    rule = spec.rule
+    validate_results(scenario, rule_result, spec)
+  end
 
+  private
+
+  def validate_results(scenario, rule_result, spec)
+    rule = spec.rule
     single_result = rule.size == 1
     if single_result
       next_result = rule_result.first
@@ -22,8 +27,6 @@ class RuleValidator
       validate_multi(scenario: scenario, spec: spec, rule_result: rule_result)
     end
   end
-
-  private
 
   def validate_multi(scenario: [], spec: nil, rule_result: [])
     matched_outputs = []
@@ -36,14 +39,18 @@ class RuleValidator
       matched_outputs << spec.rule.outcomes[i]
     end
 
-    Rast.assert("#{spec.description} #{scenario} must fall into a unique rule outcome/clause, matched: #{matched_outputs}") do
-      match_count == 1 || match_count == 0 && !spec.default_outcome.nil?
-    end
+    verify_results(spec, scenario, matched_outputs, match_count)
 
     matched_outputs.first || spec.default_outcome
   end
 
-  #
+  def verify_results(spec, scenario, matched_outputs, match_count)
+    Rast.assert("#{spec.description} #{scenario} must fall into a unique rule" \
+      " outcome/clause, matched: #{matched_outputs}") do
+      match_count == 1 || match_count.zero? && !spec.default_outcome.nil?
+    end
+  end
+
   def binary_outcome(outcome: '', spec: nil, expected: false)
     if expected == 'true'
       outcome
