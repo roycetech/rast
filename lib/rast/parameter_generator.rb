@@ -176,6 +176,11 @@ class ParameterGenerator
     boolean_pair = boolean_pair(outcomes)
     return boolean_pair if boolean_pair
 
+    default_pair(spec_config)
+  end
+
+  def default_pair(spec_config)
+    outcomes = spec_config['rules'].keys
     { outcomes.first => spec_config['default'] } if spec_config['default']
   end
 
