@@ -34,8 +34,12 @@ class SpecDSL
     @variables = vars
   end
 
-  def exclude(clause)
+  def exclusion(clause)
     @exclude = clause
+  end
+
+  def inclusion(clause)
+    @include = clause
   end
 
   def rules(rules)
@@ -69,22 +73,21 @@ class SpecDSL
         'pair' => @pair,
         'converters' => @converters,
         'rules' => @rules,
-        'exclude' => @exclude
+        'exclude' => @exclude,
+        'include' => @include
       } }
 
       @fixtures = parameter_generator.generate_fixtures(spec_id: @spec_id)
     end
 
     @fixtures.sort_by! do |fixture|
-
       if fixture[:expected].nil?
-        raise 'Broken initialization, check your single rule/else/default configuration'
+        raise 'Broken initialization, check your single rule/else/default ' \
+              'configuration'
       end
 
       fixture[:expected] + fixture[:scenario].to_s
     end
-
-    # @fixtures.reverse!
 
     generate_rspecs
   end

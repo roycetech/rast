@@ -2,5 +2,5 @@
 specs:
   '#positive?':
     variables: {number: [-1, 0, 1, 2]}
-    include: '-1 | 0 | 1'
-    outcomes: {true: '1[0]'}
+    outcomes: {true: 1}
+    exclude: 2
