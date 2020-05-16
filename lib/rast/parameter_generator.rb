@@ -45,25 +45,43 @@ class ParameterGenerator
   private
 
   def valid_case?(scenario, spec)
-    return true if spec.exclude_clause.nil? && spec.include_clause.nil?
+    return true unless with_optional_clause?(spec)
 
-    rule_evaluator = RuleEvaluator.new(converters: spec.converters)
+    # rule_evaluator = RuleEvaluator.new(converters: spec.converters)
 
     include_result = true
     unless spec.exclude_clause.nil?
-      exclude_clause = Rule.sanitize(clause: spec.exclude_clause)
-      rule_evaluator.parse(expression: exclude_clause)
-      evaluate_result = rule_evaluator.evaluate(scenario: scenario, rule_token_convert: spec.token_converter)
-      include_result = evaluate_result == 'false'
+      include_result = exclude_scenario?(spec, scenario)
     end
 
     return include_result if spec.include_clause.nil? || !include_result
 
+    include_scenario?(spec, scenario)
+  end
+
+  def include_scenario?(spec, scenario)
+    rule_evaluator = RuleEvaluator.new(converters: spec.converters)
     include_clause = Rule.sanitize(clause: spec.include_clause)
     rule_evaluator.parse(expression: include_clause)
-    include_result = rule_evaluator.evaluate(scenario: scenario, rule_token_convert: spec.token_converter) == "true"
+    rule_evaluator.evaluate(
+      scenario: scenario,
+      rule_token_convert: spec.token_converter
+    ) == 'true'
+  end
 
-    include_result
+  def exclude_scenario?(spec, scenario)
+    rule_evaluator = RuleEvaluator.new(converters: spec.converters)
+    exclude_clause = Rule.sanitize(clause: spec.exclude_clause)
+    rule_evaluator.parse(expression: exclude_clause)
+    rule_evaluator.evaluate(
+      scenario: scenario,
+      rule_token_convert: spec.token_converter
+    ) == 'false'
+  end
+
+  # Has an exclude or include clause
+  def with_optional_clause?(spec)
+    !spec.exclude_clause.nil? || !spec.include_clause.nil?
   end
 
   # add all fixtures to the list.
