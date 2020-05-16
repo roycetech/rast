@@ -147,12 +147,16 @@ end
 
 def _it_title(expected, scenario)
   spec_params = scenario.keys.inject('') do |output, key|
-    output += ', ' unless output == ''
-    calc_key = scenario[key].nil? ? nil : scenario[key]
-    output + "#{key}: #{calc_key}"
+    build_it(scenario, output, key)
   end
 
   "[#{expected}]=[#{spec_params}]"
+end
+
+def build_it(scenario, output, key)
+  output += ', ' unless output == ''
+  calc_key = scenario[key].nil? ? nil : scenario[key]
+  output + "#{key}: #{calc_key}"
 end
 
 # DSL Entry Point

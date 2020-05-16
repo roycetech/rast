@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rast/rules/operator'
+require 'rast/rules/token_util'
 require 'rast/rules/logic_helper'
 require 'rast/converters/int_converter'
 require 'rast/converters/float_converter'
@@ -114,7 +115,7 @@ class RuleEvaluator
   # 1private
   def next_value_with_subscript(rule_token_convert, token)
     token_cleaned = token.to_s.strip
-    subscript = extract_subscript(token: token_cleaned)
+    subscript = TokenUtil.extract_subscript(token: token_cleaned)
     token_body = subscript > -1 ? token_cleaned[/^.+(?=\[)/] : token_cleaned
 
     {
@@ -155,19 +156,6 @@ class RuleEvaluator
   end
 
   private
-
-  # /**
-  #  * Returns value of 'n' if rule token ends with '[n]'. where 'n' is the
-  #  * variable group index.
-  #  *
-  #  * @param string token to check for subscript.
-  #  */
-  def extract_subscript(token: '')
-    return -1 if token.is_a? Array
-
-    subscript = token[/\[(\d+)\]$/, 1]
-    subscript.nil? ? -1 : subscript.to_i
-  end
 
   # /**
   #  * @param scenario List of values to evaluate against the rule expression.
@@ -252,7 +240,7 @@ class RuleEvaluator
   end
 
   def evaluate_non_internal(scenario, latest)
-    subscript = extract_subscript(token: latest)
+    subscript = TokenUtil.extract_subscript(token: latest)
     converter = DEFAULT_CONVERT_HASH[scenario.first.class]
     if subscript < 0
       converted = converter.convert(latest)
@@ -276,7 +264,7 @@ class RuleEvaluator
   # /** @param scenario to evaluate against the rule expression. */
   def evaluate_one_rpn(scenario: [])
     single = @stack_rpn.last
-    subscript = extract_subscript(token: single)
+    subscript = TokenUtil.extract_subscript(token: single)
     default_converter = DEFAULT_CONVERT_HASH[scenario.first.class]
     if subscript > -1
       scenario[subscript] == default_converter.convert(single[RE_TOKEN_BODY])
