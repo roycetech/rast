@@ -47,7 +47,7 @@ end
 
 Running the test:
 
-`$ rspec -fd spec/examples/positive_spec.rb` 
+`$ rspec -fd spec/examples/positive_spec.rb`
 
 Test result:
 
@@ -60,6 +60,8 @@ Positive: #positive?
 Finished in 0.00471 seconds (files took 0.47065 seconds to load)
 3 examples, 0 failures
 ```
+
+Read the [documentation](./Documentation.md) for more examples.
 
 ## Contributing
 
