@@ -215,7 +215,7 @@ outcomes:
 
 ### Stubbing
 
-In this example, stubbing is done as you normally would. A prepare block is an
+In this example, stubbing is done as you normally would. A `prepare` block is an
  optional block to organize the parts of the test into preparation and execution
  parts.
 
@@ -278,6 +278,11 @@ Suppose we have a HotelFinder class that has a dependency to air conditioning
  ```
 
 ### Spec file without yaml
+
+If a single spec is preferred, like in cases where it's much simplier,
+ the required configuration can be written with similar name except for the
+ `inclusion` and `exclusion`.  The difference is due to the name clash with the
+ `include` keyword in ruby.
 
 ```ruby
 rast Positive do
