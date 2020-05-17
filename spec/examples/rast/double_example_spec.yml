@@ -1,12 +1,12 @@
 ---
 specs:
-  '#process':
+  '#applicable?':
     variables:
-      With Sim: [false, true]
-      With Product: [false, true]
-      Best: [false, true]
-      Product: [non-ayg, ayg]
+      Air Conditioning: [false, true]
+      Security: [false, true]
+      Operational: [false, true]
+      Security Grade: [basic, advanced, diplomat]
 
-    exclude: false[1] & ayg | false[0] & true[2]
-    outcomes: {AYG Best: 'true[0] & true[1] & true[2] & ayg'}
-    else: 'FALSE'
+    exclude: false[0] & false[2] | false[1] & !basic
+    outcomes: {PASSED: 'true[0] & true[1] & true[2] & diplomat'}
+    else: INADEQUATE

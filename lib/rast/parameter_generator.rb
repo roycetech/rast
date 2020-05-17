@@ -21,6 +21,8 @@ class ParameterGenerator
 
     spec_config = @specs_config[spec_id]
 
+    raise "Spec not found for: #{spec_id}. Check yaml file." if spec_config.nil?
+
     spec_config[:description] = spec_id
 
     # Keep, for backwards compatibility

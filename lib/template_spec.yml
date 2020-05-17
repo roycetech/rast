@@ -1,16 +1,14 @@
 ---
 specs:
+  # spec key uniquely identifies a spec. It has to match the ID when the spec
+  # block is invoked in the ruby spec file. Usually the method name.
   spec_key:
     description: Spec Description
 
     variables:
-      param1:
-        - one
-        - two
+      param1: [one, two]
 
     outcomes:  # required (dictionary)
-      true: true[0]
+      true: one[0]  # sample outcome.
 
-    pair: {true: one}  # optional. (dictionary with 1 mapping)
-
-    default: DEFAULT  # optional (scalar) fall off value, or the else result of the `pair` config.
+    default: DEFAULT  # optional (scalar) fall off value.

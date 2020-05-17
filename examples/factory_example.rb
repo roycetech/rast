@@ -2,10 +2,10 @@
 
 # Sample module
 module FactoryExample
-  def phone_plan_name
-    return @phone.third_name if @phone.third_name
-    return @phone.second_name if @phone.second_name
+  def person_name
+    return @person.alias_name if @person.alias_name
+    return @person.last_name if @person.last_name
 
-    @phone.first_name
+    @person.first_name
   end
 end
