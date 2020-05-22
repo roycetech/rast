@@ -2,9 +2,9 @@
 specs:
   '#applicable?':
     variables:
-      Air Conditioning: [false, true]
-      Security: [false, true]
-      Operational: [false, true]
+      Air Conditioning: boolean
+      Security: boolean
+      Operational: boolean
       Security Grade: [basic, advanced, diplomat]
 
     exclude: false[0] & false[2] | false[1] & !basic

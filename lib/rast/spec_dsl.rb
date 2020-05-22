@@ -8,7 +8,7 @@ class SpecDSL
   include FactoryGirl::Syntax::Methods
 
   attr_accessor :subject, :execute_block,
-                :prepare_block, :transients, :outcomes, :fixtures, :spec_id
+                :prepare_block, :outcomes, :fixtures, :spec_id
 
   # # yaml-less
   attr_writer :variables, :exclude, :include, :converters, :rules, :pair,
@@ -23,8 +23,6 @@ class SpecDSL
     # cannot derive name from subject when sut is a module.
     @subject_name = name || subject.class
     @fixtures = fixtures
-
-    @transients = []
 
     instance_eval(&block)
   end
@@ -56,11 +54,14 @@ class SpecDSL
     rules(outcomes)
   end
 
+  def default(default)
+    @default_outcome = default
+  end
+
   # yaml-less end
 
   def prepare(&block)
     @prepare_block = block
-    @transients
   end
 
   def execute(&block)
@@ -74,7 +75,8 @@ class SpecDSL
         'converters' => @converters,
         'rules' => @rules,
         'exclude' => @exclude,
-        'include' => @include
+        'include' => @include,
+        'default' => @default_outcome
       } }
 
       @fixtures = parameter_generator.generate_fixtures(spec_id: @spec_id)
@@ -82,8 +84,8 @@ class SpecDSL
 
     @fixtures.sort_by! do |fixture|
       if fixture[:expected].nil?
-        raise 'Broken initialization, check your single rule/else/default ' \
-              'configuration'
+        raise "Expected outcome not found for #{fixture[:scenario]}, check" \
+              ' your single rule/else/default configuration'
       end
 
       fixture[:expected] + fixture[:scenario].to_s

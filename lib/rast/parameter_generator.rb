@@ -29,12 +29,14 @@ class ParameterGenerator
     spec_config['rules'] ||= spec_config['outcomes']
     spec_config['default'] ||= spec_config['else']
 
+    spec_config['variables'] = expand_variables(spec_config['variables'])
+
     spec = build_spec(spec_config)
 
     list = []
 
     variables = spec.variables
-    var_first = spec.variables.first
+    var_first = variables.first
     multipliers = []
 
     (1...variables.size).each { |i| multipliers << variables.values[i].dup }
@@ -45,6 +47,20 @@ class ParameterGenerator
   end
 
   private
+
+  def expand_variables(variables)
+    return nil unless variables
+
+    expanded_variables = {}
+    variables.each do |key, tokens|
+      expanded_variables[key] = if tokens == 'boolean'
+                                  [false, true]
+                                else
+                                  tokens
+                                end
+    end
+    expanded_variables
+  end
 
   def valid_case?(scenario, spec)
     return true unless with_optional_clause?(spec)
@@ -191,7 +207,7 @@ class ParameterGenerator
     outcomes = spec_config['rules'].keys
     return {} unless outcomes.size == 1
 
-    boolean_pair = boolean_pair(outcomes)
+    boolean_pair = boolean_pair(outcomes, spec_config)
     return boolean_pair if boolean_pair
 
     default_pair(spec_config)
@@ -203,16 +219,16 @@ class ParameterGenerator
   end
 
   # refactored out of calculate_pair.
-  def boolean_pair(outcomes)
+  def boolean_pair(outcomes, spec_config)
+    return false if spec_config['default']
+
     if [TrueClass, FalseClass].include?(outcomes.first.class)
       return { outcomes.first => !outcomes.first }
     end
 
-    if %w[true false].include?(outcomes.first)
-      return { outcomes.first => (outcomes.first != 'true').to_s }
-    end
+    return unless %w[true false].include?(outcomes.first)
 
-    false
+    { outcomes.first => (outcomes.first != 'true').to_s }
   end
 
   def same_data_type(array)

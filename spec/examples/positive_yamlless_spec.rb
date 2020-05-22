@@ -9,6 +9,7 @@ rast Positive do
     outcomes(true: 1)
     inclusion('!3')
     exclusion(2)
+    default(:false) # optional
     execute { |number| subject.positive?(number) }
   end
 end

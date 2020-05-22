@@ -5,10 +5,10 @@ require './examples/hotel_finder'
 
 rast HotelFinder do
   spec '#applicable?' do
-    prepare do |with_ac, is_opererational, with_security, security_grade|
+    prepare do |with_ac, is_operational, with_security, security_grade|
       if with_ac
         allow(subject)
-          .to receive(:aircon) { double(operational?: is_opererational) }
+          .to receive(:aircon) { double(operational?: is_operational) }
       end
 
       if with_security

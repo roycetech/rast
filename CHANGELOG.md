@@ -8,6 +8,12 @@
 
 ## Released
 
+
+- 0.19.0 - [feature] boolean in variables definition to automatically infer
+           false and true
+           [feature] xrast to skip entire test.
+           [feature] Add default outcome in yaml-less configuration. Default
+           config will take higher precedence than boolean outcomes.
 - 0.18.0 - [feature] xspec to skip a test
          - [feature] Added include rule to isolate scenarios.
          - [feature] Asterisk can be used as token character.

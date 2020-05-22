@@ -34,7 +34,7 @@ class Rast
     raise message unless yield
   end
 
-  def xspec(id, &block)
+  def xspec(id)
     p "xspec skipped #{id}"
   end
 
@@ -52,4 +52,8 @@ end
 # DSL Entry Point
 def rast(rasted_subject, &block)
   Rast.new(rasted_subject, &block)
+end
+
+def xrast(rasted_subject)
+  p "xrast skipped #{rasted_subject}"
 end

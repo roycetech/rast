@@ -12,7 +12,12 @@ class RastSpec
 
   attr_accessor :exclude
 
-  def initialize(description: '', variables: [][], rule: nil, default_outcome: '')
+  def initialize(
+    description: '',
+    variables: [][],
+    rule: nil,
+    default_outcome: ''
+  )
     @description = description
     @variables = variables
     @pair = {}
@@ -37,7 +42,8 @@ class RastSpec
 
     @variables.keys.each_with_index do |key, index|
       @variables[key].each do |element|
-        converter = RuleEvaluator::DEFAULT_CONVERT_HASH[element.class] || converters[index]
+        converter = RuleEvaluator::DEFAULT_CONVERT_HASH[element.class] ||
+                    converters[index]
         @token_converter[element.to_s] = converter
       end
     end
