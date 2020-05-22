@@ -144,11 +144,14 @@ def generate_rspec(scope: nil, scenario: {}, expected: '')
       instance_exec(*block_params, &scope.prepare_block)
     end
 
-    actual = scope.execute_block.call(*block_params)
-    actual = actual.nil? ? 'nil' : actual.to_s
-
+    actual = execute_and_format_result(scope, block_params)
     expect(actual).to eq(expected)
   end
+end
+
+def execute_and_format_result(scope, block_params)
+  actual = scope.execute_block.call(*block_params)
+  actual.nil? ? 'nil' : actual.to_s
 end
 
 def _it_title(expected, scenario)
