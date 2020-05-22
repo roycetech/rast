@@ -35,7 +35,8 @@ class RuleEvaluator
     Array => DefaultConverter.new,
     TrueClass => BoolConverter.new,
     FalseClass => BoolConverter.new,
-    String => StrConverter.new
+    String => StrConverter.new,
+    NilClass => DefaultConverter.new
   }.freeze
 
   # /** @param pConverterList list of rule token converters. */

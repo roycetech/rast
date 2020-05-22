@@ -144,7 +144,8 @@ def generate_rspec(scope: nil, scenario: {}, expected: '')
       instance_exec(*block_params, &scope.prepare_block)
     end
 
-    actual = scope.execute_block.call(*block_params).to_s
+    actual = scope.execute_block.call(*block_params)
+    actual = actual.nil? ? 'nil' : actual.to_s
 
     expect(actual).to eq(expected)
   end
@@ -160,7 +161,7 @@ end
 
 def build_it(scenario, output, key)
   output += ', ' unless output == ''
-  calc_key = scenario[key].nil? ? nil : scenario[key]
+  calc_key = scenario[key].nil? ? 'nil' : scenario[key]
   output + "#{key}: #{calc_key}"
 end
 

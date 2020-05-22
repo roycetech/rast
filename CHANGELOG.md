@@ -2,23 +2,26 @@
 
 ## Unreleased
 
-- Add travis-ci build.
-- Add RubyGems badge
-- Update documentation.
 
 ## Released
 
+- 0.19.1 - [bug] nil as configured outcome
+         - [bug] nil showing in the report as empty string.
 
 - 0.19.0 - [feature] boolean in variables definition to automatically infer
            false and true
            [feature] xrast to skip entire test.
            [feature] Add default outcome in yaml-less configuration. Default
            config will take higher precedence than boolean outcomes.
+
 - 0.18.0 - [feature] xspec to skip a test
          - [feature] Added include rule to isolate scenarios.
          - [feature] Asterisk can be used as token character.
          - [bug] Duplicate outcome wasn't detected when there's default config.
          - [enhancement] Early return for 'and' and 'or' operators.
+         - Add travis-ci build.
+         - Add RubyGems badge
+         - Update documentation.
 
 - 0.17.0 - Allow default outcome for unmatched scenarios.
 - 0.16.0 - Allow isolation of scenarios via include clause.
