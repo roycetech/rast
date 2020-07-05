@@ -110,19 +110,19 @@ class RuleEvaluator
     
     return default if token.is_a?(Array) || [TRUE, FALSE].include?(token)
 
-    next_value_default(rule_token_convert, token)
+    next_value_default(token)
   end
 
   # private
-  def next_value_default(rule_token_convert, token)
+  def next_value_default(token)
     token_cleaned = token.to_s.strip
     subscript = TokenUtil.extract_subscript(token: token_cleaned)
     token_body = subscript > -1 ? token_cleaned[/^.+(?=\[)/] : token_cleaned
 
-    raise "Config Error: Outcome clause token: '#{token}' not found in variables" if rule_token_convert[token_body].nil?
+    raise "Config Error: Outcome clause token: '#{token}' not found in variables" if @token_converters[token_body].nil?
 
     {
-      value: rule_token_convert[token_body].convert(token_body),
+      value: @token_converters[token_body].convert(token_body),
       subscript: subscript
     }
   end

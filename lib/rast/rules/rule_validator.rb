@@ -5,10 +5,13 @@ require 'rast/rules/rule_processor'
 # Validates rules
 class RuleValidator
   def validate(scenario: [], fixture: {})
-    rule_result = RuleProcessor.new.evaluate(
-      scenario: scenario,
-      fixture: fixture
+    spec = fixture[:spec]
+    rule_processor = RuleProcessor.new(
+      rule: spec.rule,
+      token_converters: spec.token_converter
     )
+
+    rule_result = rule_processor.evaluate(scenario: scenario)
 
     spec = fixture[:spec]
     validate_results(scenario, rule_result, spec)
@@ -32,7 +35,9 @@ class RuleValidator
     matched_outputs = []
     match_count = 0
 
-    rule_result.map { |result| result.to_s == 'true' }.each_with_index do |result, i|
+    rule_result.map do |result|
+      result.to_s == 'true'
+    end.each_with_index do |result, i|
       next unless result
 
       match_count += 1
