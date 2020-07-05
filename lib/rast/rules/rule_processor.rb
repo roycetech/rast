@@ -9,10 +9,6 @@ class RuleProcessor
   #  * @param caseFixture current test case fixture.
   #  */
   def evaluate(scenario: [], fixture: nil)
-    # if scenario.empty? || fixture.nil?
-    #   raise 'Scenario or fixture cannot be nil.'
-    # end
-
     fixture[:spec].rule.outcomes.inject([]) do |retval, outcome|
       process_outcome(
         scenario: scenario,
@@ -29,7 +25,7 @@ class RuleProcessor
     spec = fixture[:spec]
 
     clause = spec.rule.clause(outcome: outcome)
-    rule_evaluator = RuleEvaluator.new(converters: spec.converters)
+    rule_evaluator = RuleEvaluator.new(token_converters: spec.token_converter)
 
     rule_evaluator.parse(expression: clause)
 

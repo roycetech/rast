@@ -28,7 +28,7 @@ module LogicHelper
   #  * @operation :and or :or.
   #  */
   def perform_logical(scenario: [], left: {}, right: {}, operation: :nil)
-    evaluated = send(:both_internal?, left, right, operation)
+    evaluated = both_internal?(left, right, operation)
     return evaluated if evaluated
 
     default = operation == :and ? TRUE : FALSE
@@ -83,8 +83,7 @@ module LogicHelper
 
     return false unless left_eval
 
-    right_eval = present?(scenario, right)
-    left_eval && right_eval
+    present?(scenario, right)
   end
 
   def evaluate_or(scenario, left, right)
@@ -92,8 +91,7 @@ module LogicHelper
 
     return true if left_eval
 
-    right_eval = present?(scenario, right)
-    left_eval || right_eval
+    present?(scenario, right)
   end
 
   # /**

@@ -39,9 +39,9 @@ class RuleEvaluator
     NilClass => DefaultConverter.new
   }.freeze
 
-  # /** @param pConverterList list of rule token converters. */
-  def initialize(converters: [])
-    @converters = converters
+  # /** @param token_converters token to converter mapping */
+  def initialize(token_converters: {})
+    @token_converters = token_converters
 
     @stack_operations = []
     @stack_rpn = []
@@ -107,7 +107,7 @@ class RuleEvaluator
       subscript: -1,
       value: token
     }
-
+    
     return default if token.is_a?(Array) || [TRUE, FALSE].include?(token)
 
     next_value_default(rule_token_convert, token)

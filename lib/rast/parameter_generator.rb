@@ -36,6 +36,8 @@ class ParameterGenerator
     list = []
 
     variables = spec.variables
+    # dict.first method returns the first key and value as an array, so invoking .first, then . last would return the
+    # first value.
     var_first = variables.first
     multipliers = []
 
@@ -67,12 +69,12 @@ class ParameterGenerator
 
     include_result = true
     unless spec.exclude_clause.nil?
-      include_result = qualify_secario?(spec, scenario, false)
+      include_result = qualify_scenario?(spec, scenario, false)
     end
 
     return include_result if no_include_or_dont_include?(spec, include_result)
 
-    qualify_secario?(spec, scenario, true)
+    qualify_scenario?(spec, scenario, true)
   end
 
   # blech!
@@ -80,9 +82,9 @@ class ParameterGenerator
     spec.include_clause.nil? || !include_result
   end
 
-  def qualify_secario?(spec, scenario, is_included)
+  def qualify_scenario?(spec, scenario, is_included)
     action = is_included ? 'include' : 'exclude'
-    rule_evaluator = RuleEvaluator.new(converters: spec.converters)
+    rule_evaluator = RuleEvaluator.new(token_converters: spec.token_converter)
     clause = Rule.sanitize(clause: spec.send("#{action}_clause"))
     rule_evaluator.parse(expression: clause)
     rule_evaluator.evaluate(

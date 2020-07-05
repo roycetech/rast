@@ -10,25 +10,12 @@ class Rule
   #  * <b>Parameter Example:</b><br/>
   #  * Visible:Proposed|Approved<br/>
   #  * <br/>
-  #  * Peace:Friendly|Indifferent\<br/>
-  #  * ~War:Angry\<br/>
-  #  * ~Neutral:Play safe
   #  */
   def initialize(rules: {})
     raise 'Must not have empty rules' if rules.empty?
 
     @outcome_clause_hash = {}
-    # should have array of the rule pairs
-    # rules = pActRuleSrc.split("~");
-    duplicates = []
-
     rules.each do |outcome, clause|
-      # if duplicates.include?(outcome)
-      #   raise "#{outcome} matched multiple clauses"
-      # end
-
-      # duplicates << outcome
-
       @outcome_clause_hash[outcome.to_s] = Rule.sanitize(clause: clause)
     end
   end
