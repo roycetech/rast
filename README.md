@@ -85,8 +85,8 @@ DSL. The DSL will then invoke the parameter generator to generate the scenarios.
 
 ### Releasing new features/bugfix
 
-- Increment the .gemspec
-- Modify the CHANGELOG.md
+- Increment the [.gemspec](./.gemspec)
+- Modify the [CHANGELOG.md](./CHANGELOG.md)
 
 ### Releasing GEM
 
