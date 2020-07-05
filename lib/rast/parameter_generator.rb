@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 require 'yaml'
-require 'rast/rast_spec'
+
 require 'rast/rules/rule'
 require 'rast/rules/rule_evaluator'
-require 'rast/rules/rule_validator'
+
+require 'rast/rast_spec'
+require 'rast/rule_validator'
 
 # Generates the test parameters.
 class ParameterGenerator
@@ -36,7 +38,8 @@ class ParameterGenerator
     list = []
 
     variables = spec.variables
-    # dict.first method returns the first key and value as an array, so invoking .first, then . last would return the
+    # dict.first method returns the first key and value as an array, so invoking
+    # .first, then . last would return the
     # first value.
     var_first = variables.first
     multipliers = []

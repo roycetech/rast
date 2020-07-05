@@ -19,6 +19,7 @@ class RuleValidator
 
   private
 
+  # @returns string
   def validate_results(scenario, rule_result, spec)
     rule = spec.rule
     single_result = rule.size == 1
@@ -35,9 +36,7 @@ class RuleValidator
     matched_outputs = []
     match_count = 0
 
-    rule_result.map do |result|
-      result.to_s == 'true'
-    end.each_with_index do |result, i|
+    to_boolean(string_list: rule_result).each_with_index do |result, i|
       next unless result
 
       match_count += 1
@@ -47,6 +46,13 @@ class RuleValidator
     verify_results(spec, scenario, matched_outputs, match_count)
 
     matched_outputs.first || spec.default_outcome
+  end
+
+  # @returns array of boolean from array of strings. 'true' becomes true.
+  def to_boolean(string_list: [])
+    string_list.map do |result|
+      result.to_s == 'true'
+    end
   end
 
   def verify_results(spec, scenario, matched_outputs, match_count)
