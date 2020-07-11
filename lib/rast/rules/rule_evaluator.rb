@@ -86,13 +86,13 @@ class RuleEvaluator
   #  * @param rule_token_convert mapping of rule tokens to converter.
   #  * @return <code>String</code> representation of the result
   #  */
-  def evaluate(scenario: [], rule_token_convert: {})
+  def evaluate(scenario: [])
     if @stack_rpn.size == 1
       evaluate_one_rpn(scenario: scenario).to_s
     else
       evaluate_multi_rpn(
         scenario: scenario,
-        rule_token_convert: rule_token_convert
+        rule_token_convert: @token_converters
       )
     end
   end

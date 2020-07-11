@@ -91,8 +91,7 @@ class ParameterGenerator
     clause = Rule.sanitize(clause: spec.send("#{action}_clause"))
     rule_evaluator.parse(expression: clause)
     rule_evaluator.evaluate(
-      scenario: scenario,
-      rule_token_convert: spec.token_converter
+      scenario: scenario
     ) == is_included.to_s
   end
 
