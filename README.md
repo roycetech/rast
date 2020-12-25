@@ -29,7 +29,7 @@ end
 
 ```yaml
 specs:
-  Is Positive Exaple:
+  Is Positive Example:
     variables: {number: [-1, 0, 1]}
     outcomes: {true: 1}
 ```
