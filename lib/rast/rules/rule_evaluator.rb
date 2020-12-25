@@ -53,6 +53,7 @@ class RuleEvaluator
   #  *
   #  * @param pExpression <code>String</code> input expression (logical
   #  *            expression formula)
+  #  * @return void.
   #  * @since 0.3.0
   #  */
   def parse(expression: '')
@@ -107,7 +108,7 @@ class RuleEvaluator
       subscript: -1,
       value: token
     }
-    
+
     return default if token.is_a?(Array) || [TRUE, FALSE].include?(token)
 
     next_value_default(token)

@@ -26,6 +26,7 @@ module LogicHelper
   #  * @left left left token object.
   #  * @right right right token object.
   #  * @operation :and or :or.
+  #  * @returns String boolean value, can be internal, thus it is string.
   #  */
   def perform_logical(scenario: [], left: {}, right: {}, operation: :nil)
     evaluated = both_internal?(left, right, operation)
