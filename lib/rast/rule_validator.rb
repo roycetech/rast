@@ -62,7 +62,7 @@ class RuleValidator
     end
   end
 
-  def binary_outcome(outcome: '', spec: nil, expected: false)
+  def binary_outcome(outcome: '', spec: nil, expected: 'false')
     if expected == 'true'
       outcome
     else

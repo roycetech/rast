@@ -14,7 +14,7 @@ class RastSpec
 
   def initialize(
     description: '',
-    variables: [][],
+    variables: {},
     rule: nil,
     default_outcome: ''
   )
