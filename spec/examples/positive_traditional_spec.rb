@@ -8,6 +8,13 @@ describe Positive do
   subject { described_class.new.positive?(number) }
 
   context '#positive?' do
+
+    it 'matches expected' do
+      expect(described_class.new.positive?(-1)).to be_falsey
+      expect(described_class.new.positive?(0)).to be_falsey
+      expect(described_class.new.positive?(1)).to be_truthy
+    end
+
     context 'given -1' do
       let(:number) { -1 }
 

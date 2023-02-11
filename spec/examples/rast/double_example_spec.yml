@@ -5,8 +5,8 @@ specs:
       Air Conditioning: boolean
       Security: boolean
       Operational: boolean
-      Security Grade: [basic, advanced, diplomat]
+      Security Grade: [basic, diplomat]
 
-    exclude: false[0] & false[2] | false[1] & !basic
+    exclude: false[0] & true[2]
     outcomes: {PASSED: 'true[0] & true[1] & true[2] & diplomat'}
     else: INADEQUATE

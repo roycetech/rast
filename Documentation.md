@@ -257,7 +257,7 @@ Suppose we have a HotelFinder class that has a dependency to air conditioning
  and security
 
  ```ruby
- rast HotelFinder do
+ rast DiplomatHotelFinder do
    spec '#applicable?' do
      prepare do |with_ac, is_opererational, with_security, security_grade|
        if with_ac
