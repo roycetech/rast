@@ -75,8 +75,8 @@ Finished in 0.00292 seconds (files took 0.26024 seconds to load)
 ### Filtering Out Invalid Cases
 
 In a prior example `HotelFinder`, some cases are invalid. For example, if an
- aircon is not available, then it makes to sense to check if it is operational
- not. In such case, we should limit the scenarios with `exclude` clause.
+ aircon is not available, then it makes no sense to check if it is operational
+ not. In such case, we can limit the scenarios with `exclude` clause.
 
 ```yaml
 # double_example_spec.yml

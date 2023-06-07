@@ -5,8 +5,10 @@
 
 ## Released
 
-- 0.19.1 - [bug] nil as configured outcome
-         - [bug] nil showing in the report as empty string.
+- 0.19.1
+
+    - [bug] nil as configured outcome
+    - [bug] nil showing in the report as empty string.
 
 - 0.19.0 - [feature] boolean in variables definition to automatically infer
            false and true
