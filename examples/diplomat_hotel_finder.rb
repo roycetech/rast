@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Example
-class HotelFinder
+class DiplomatHotelFinder
   def aircon; end
 
   def security; end
