@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'factory_girl'
+require 'factory_bot'
 require 'rast/parameter_generator'
 
 # Main DSL. This is the entry point of the test when running a spec.
 class SpecDSL
-  include FactoryGirl::Syntax::Methods
+  include FactoryBot::Syntax::Methods
 
   attr_accessor :subject, :execute_block,
                 :prepare_block, :outcomes, :fixtures, :spec_id

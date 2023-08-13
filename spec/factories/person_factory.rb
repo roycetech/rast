@@ -3,7 +3,7 @@
 require './examples/person'
 
 # This will guess the Phone class
-FactoryGirl.define do
+FactoryBot.define do
   factory :personal, class: Person do
     first_name { 'John' }
 

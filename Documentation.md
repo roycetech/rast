@@ -5,6 +5,7 @@
 YAML is the preferred because it simplifies the content of the spec file. YAML contains the variables that affect the outcome, and the expected outcome based on rules that involve the said variables.
 
 ```yaml
+---
 specs:
   # spec key uniquely identifies a spec. It has to match the ID when the spec
   # block is invoked in the ruby spec file. Usually the method name.
@@ -28,6 +29,7 @@ In the example below, the left variable has the subscript of `0`, and the right 
 [logic_checker_spec.yml](./spec/examples/rast/logic_checker_spec.yml)
 
 ```yaml
+---
 specs:
   Logical AND:
     variables:
@@ -191,12 +193,12 @@ specs:
       - "Will this work?"
       - "Let's make a statement"
 ...
-
 ```
 
 The rules must then be written in a different way, as arrays.
 
 ```yaml
+---
 ...
     outcomes:
       exclamation: ["Let's do it!"]
@@ -207,6 +209,7 @@ The rules must then be written in a different way, as arrays.
 If an operation is involved:
 
 ```yaml
+---
 outcomes:
   non-question: ["Let's do it!", '|', "Let's make a statement"]
 ```
@@ -277,7 +280,7 @@ Suppose we have a HotelFinder class that has a dependency to air conditioning
 
  ```
 
-### Spec file without yaml
+### Spec file without YAML
 
 If a single spec is preferred, like in cases where it's much simplier,
  the required configuration can be written with similar name except for the

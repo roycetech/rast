@@ -1,9 +1,12 @@
-# Change log
+# Change logs
 
 ## Unreleased
 
 
 ## Released
+
+- 1.00.0
+    - [maint] Updated for Ruby 3.0, updated Gemfiles. 
 
 - 0.19.1
 

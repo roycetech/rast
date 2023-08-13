@@ -57,8 +57,8 @@ accepting a parameter.
 
 #### Step 2: Defining outcomes and the variables that affects the test.
 
-For the sake of simplicity, we will define the variables and outcomes in a separate yaml file, mainly because the next
-steps are purely configurations. Using yaml is completely optional.
+For the sake of simplicity, we will define the variables and outcomes in a separate YAML file, mainly because the next
+steps are purely configurations. Using YAML is completely optional.
 
 Create a folder `rast` in the same level as the spec file:
 
@@ -70,8 +70,9 @@ Create a yaml file with the same name as the spec, but with `.yml` extension.
 `spec/rast/positive_spec.yml` would contain:
 
 ```yaml
+---
 specs:
-  Is Positive Exaple:
+  Is Positive Example:
     variables: {number: [-1, 0, 1]}
     outcomes: {true: 1}
 ```

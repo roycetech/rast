@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name          = 'rast'
-  spec.version       = '0.19.1'
+  spec.version       = '1.0.0'
   spec.authors       = ['Royce Remulla']
   spec.email         = ['royce.com@gmail.com']
 
@@ -10,9 +10,9 @@ Gem::Specification.new do |spec|
   spec.description   = 'Extends RSpec functionality by using the catch-all-scenario testing (CAST) principle.'
   spec.homepage      = 'https://github.com/roycetech/rast'
   spec.license       = 'MIT'
-  spec.required_ruby_version = Gem::Requirement.new('~> 2.0')
+  spec.required_ruby_version = Gem::Requirement.new('~> 3.2')
 
-  spec.add_runtime_dependency 'factory_girl', '~> 4.7'
+  spec.add_runtime_dependency 'factory_bot', '~> 6.2'
 
   # spec.metadata['allowed_push_host'] = "TODO: Set to 'http://mygemserver.com'"
   spec.metadata['homepage_uri'] = spec.homepage

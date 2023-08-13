@@ -5,7 +5,7 @@ source 'https://rubygems.org'
 git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 
 group :development, :test do
-  gem 'factory_girl', '~> 4.7'
+  gem 'factory_bot'
 end
 
 group :test do
@@ -14,5 +14,5 @@ group :test do
   gem 'rb-inotify', '~> 0.9.10'
 
   gem 'rspec'
-  gem 'simplecov', '~> 0.8.2'
+  gem 'simplecov'
 end

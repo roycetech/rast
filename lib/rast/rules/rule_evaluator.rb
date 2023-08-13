@@ -31,7 +31,6 @@ class RuleEvaluator
   DEFAULT_CONVERT_HASH = {
     Integer => IntConverter.new,
     Float => FloatConverter.new,
-    Fixnum => IntConverter.new,
     Array => DefaultConverter.new,
     TrueClass => BoolConverter.new,
     FalseClass => BoolConverter.new,
